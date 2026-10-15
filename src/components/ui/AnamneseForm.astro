@@ -1,0 +1,419 @@
+---
+import type { AnamneseField } from "../../content/copy";
+import site from "../../config/site";
+import copy from "../../content/copy";
+import { fill } from "../../lib/fill";
+import Button from "./Button.astro";
+
+// Client-specific form (Netlify Forms only). Every question, option and
+// message comes from copy.pages.anamnese; this file only renders them.
+const text = copy.pages.anamnese;
+const FORM_NAME = "ficha-de-anamnese";
+const consentLabelBefore = fill(text.consentLabelBefore, { businessName: site.business.name });
+
+const fieldId = (field: AnamneseField) => `anamnese-${field.name}`;
+const describedBy = (field: AnamneseField) =>
+  [field.help && `${fieldId(field)}-help`, `${fieldId(field)}-error`].filter(Boolean).join(" ");
+const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${index}`;
+---
+
+<form
+  name={FORM_NAME}
+  method="POST"
+  action={`${site.form.successPath}?ficha=1`}
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  class="anamnese-form"
+  data-error-required={text.errors.required}
+  data-error-email={text.errors.email}
+  data-error-tel={text.errors.tel}
+  data-error-number={text.errors.number}
+  data-error-checkbox-group={text.errors.checkboxGroup}
+  data-error-radio-group={text.errors.radioGroup}
+  data-error-consent={text.errors.consent}
+>
+  <input type="hidden" name="form-name" value={FORM_NAME} />
+  <p class="anamnese-form__honeypot" aria-hidden="true">
+    <label for="anamnese-botfield">{text.honeypotLabel}</label>
+    <input id="anamnese-botfield" type="text" name="bot-field" tabindex="-1" autocomplete="off" />
+  </p>
+
+  <p class="anamnese-form__required-note">{text.requiredNote}</p>
+
+  {
+    text.sections.map((section, sectionIndex) => (
+      <section class="anamnese-form__section" aria-labelledby={`anamnese-section-${section.id}`}>
+        <p class="anamnese-form__step">
+          {fill(text.stepLabelTemplate, { current: sectionIndex + 1, total: text.sections.length })}
+        </p>
+        <h2 id={`anamnese-section-${section.id}`}>{section.heading}</h2>
+
+        {section.fields.map((field) => {
+          const id = fieldId(field);
+          const marker = field.required ? (
+            <span class="anamnese-form__marker" aria-hidden="true">*</span>
+          ) : (
+            <span class="anamnese-form__optional">{text.optionalNote}</span>
+          );
+          const help = field.help && (
+            <p id={`${id}-help`} class="anamnese-form__help">{field.help}</p>
+          );
+          const error = <p id={`${id}-error`} class="anamnese-form__error" role="alert"></p>;
+
+          if (field.type === "radio" || field.type === "checkbox") {
+            const isCheckbox = field.type === "checkbox";
+            const inputName = isCheckbox ? `${field.name}[]` : field.name;
+            return (
+              <fieldset
+                class="anamnese-form__field anamnese-form__group"
+                id={id}
+                aria-describedby={describedBy(field)}
+                data-required-group={isCheckbox && field.required ? "" : undefined}
+              >
+                <legend>
+                  {field.label} {marker}
+                </legend>
+                {help}
+                <div class="anamnese-form__options">
+                  {(field.options ?? []).map((option, index) => (
+                    <label class="anamnese-form__option" for={optionId(field, index)}>
+                      <input
+                        id={optionId(field, index)}
+                        type={isCheckbox ? "checkbox" : "radio"}
+                        name={inputName}
+                        value={option}
+                        required={!isCheckbox && field.required}
+                        data-exclusive={option === field.exclusiveOption ? "" : undefined}
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                </div>
+                {field.otherOption && (
+                  <div class="anamnese-form__other">
+                    <label for={`${id}-qual`}>{text.otherDetailLabel}</label>
+                    <input id={`${id}-qual`} type="text" name={`${field.name}_qual`} />
+                  </div>
+                )}
+                {error}
+              </fieldset>
+            );
+          }
+
+          return (
+            <div class="anamnese-form__field">
+              <label for={id}>
+                {field.label} {marker}
+              </label>
+              {help}
+              {field.type === "textarea" ? (
+                <textarea
+                  id={id}
+                  name={field.name}
+                  rows="4"
+                  required={field.required}
+                  aria-describedby={describedBy(field)}
+                ></textarea>
+              ) : (
+                <input
+                  id={id}
+                  name={field.name}
+                  type={field.type}
+                  autocomplete={field.autocomplete}
+                  inputmode={field.type === "number" || field.type === "tel" ? "numeric" : undefined}
+                  pattern={field.type === "tel" ? "[0-9]{9,}" : undefined}
+                  minlength={field.type === "tel" ? 9 : undefined}
+                  min={field.min}
+                  max={field.max}
+                  required={field.required}
+                  aria-describedby={describedBy(field)}
+                />
+              )}
+              {error}
+            </div>
+          );
+        })}
+      </section>
+    ))
+  }
+
+  <div class="anamnese-form__field anamnese-form__consent">
+    <input
+      id="anamnese-consentimento"
+      name="consentimento"
+      type="checkbox"
+      value="sim"
+      required
+      aria-describedby="anamnese-consentimento-error"
+    />
+    <label for="anamnese-consentimento">
+      {consentLabelBefore}<a href="/politica-de-privacidade">{text.consentLinkText}</a>{text.consentLabelAfter}
+      <span class="anamnese-form__marker" aria-hidden="true">*</span>
+    </label>
+    <p id="anamnese-consentimento-error" class="anamnese-form__error" role="alert"></p>
+  </div>
+
+  <Button type="submit" class="anamnese-form__submit">{text.submitLabel}</Button>
+</form>
+
+<script>
+  // Progressive enhancement only: without JS the form still submits, with
+  // native validation for every field except "at least one checkbox".
+  document.querySelectorAll<HTMLFormElement>(".anamnese-form").forEach((form) => {
+    const messages = form.dataset;
+
+    const errorFor = (control: HTMLInputElement | HTMLTextAreaElement): string => {
+      const { validity } = control;
+      if (control.type === "checkbox" && control.id === "anamnese-consentimento") {
+        return messages.errorConsent ?? "";
+      }
+      if (control.type === "checkbox") return messages.errorCheckboxGroup ?? "";
+      if (control.type === "radio") return messages.errorRadioGroup ?? "";
+      if (validity.valueMissing) return messages.errorRequired ?? "";
+      if (control.type === "email") return messages.errorEmail ?? "";
+      if (control.type === "tel") return messages.errorTel ?? "";
+      if (control.type === "number") return messages.errorNumber ?? "";
+      return messages.errorRequired ?? "";
+    };
+
+    // Grouped controls (radio/checkbox) report on their fieldset's error slot.
+    const errorSlot = (control: HTMLElement) => {
+      const group = control.closest<HTMLElement>("fieldset.anamnese-form__group");
+      const id = group ? group.id : control.id;
+      return { el: document.getElementById(`${id}-error`), target: group ?? control };
+    };
+
+    const showError = (control: HTMLInputElement | HTMLTextAreaElement) => {
+      const { el, target } = errorSlot(control);
+      if (el) el.textContent = errorFor(control);
+      target.setAttribute("aria-invalid", "true");
+    };
+
+    const clearError = (control: HTMLElement) => {
+      const { el, target } = errorSlot(control);
+      if (el) el.textContent = "";
+      target.removeAttribute("aria-invalid");
+    };
+
+    // Required checkbox groups: flag the first box as invalid while none is
+    // checked, so the browser's own validation blocks submit and focuses it.
+    const groups = form.querySelectorAll<HTMLFieldSetElement>("fieldset[data-required-group]");
+    const syncGroup = (group: HTMLFieldSetElement) => {
+      const boxes = group.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+      const anyChecked = Array.from(boxes).some((box) => box.checked);
+      boxes[0]?.setCustomValidity(anyChecked ? "" : (messages.errorCheckboxGroup ?? ""));
+      return anyChecked;
+    };
+    groups.forEach((group) => syncGroup(group));
+
+    form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input, textarea").forEach((control) => {
+      if (control.type === "hidden" || control.name === "bot-field") return;
+
+      control.addEventListener("invalid", () => showError(control));
+
+      // Validate as soon as the visitor leaves a field, not only on submit.
+      // Radio/checkbox groups are skipped: moving between their options would
+      // flag the group before the visitor has finished choosing.
+      if (control.type !== "radio" && control.type !== "checkbox") {
+        control.addEventListener("blur", () => control.checkValidity());
+      }
+
+      const onChange = () => {
+        // Phone accepts digits only: drop anything else as it's typed or pasted.
+        if (control.type === "tel") control.value = control.value.replace(/\D/g, "");
+
+        const group = control.closest<HTMLFieldSetElement>("fieldset.anamnese-form__group");
+
+        // "Nenhuma das opções acima" and the like exclude every other option.
+        if (group && control.type === "checkbox" && (control as HTMLInputElement).checked) {
+          const boxes = group.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+          const isExclusive = control.hasAttribute("data-exclusive");
+          boxes.forEach((box) => {
+            if (box === control) return;
+            if (isExclusive || box.hasAttribute("data-exclusive")) box.checked = false;
+          });
+        }
+
+        if (group?.hasAttribute("data-required-group")) {
+          if (syncGroup(group)) clearError(control);
+        } else if (control.validity.valid) {
+          clearError(control);
+        }
+      };
+
+      control.addEventListener("input", onChange);
+      control.addEventListener("change", onChange);
+    });
+  });
+</script>
+
+<style>
+  .anamnese-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .anamnese-form__honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .anamnese-form__required-note {
+    color: var(--color-text-muted);
+    font-size: var(--step--1);
+  }
+
+  .anamnese-form__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .anamnese-form__step {
+    color: var(--color-accent-text);
+    font-size: var(--step--1);
+    font-weight: var(--weight-medium);
+    margin-bottom: calc(-1 * var(--space-sm));
+  }
+
+  .anamnese-form__section h2 {
+    font-size: var(--step-2);
+  }
+
+  .anamnese-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    min-width: 0;
+  }
+
+  .anamnese-form__group {
+    border: 0;
+    padding: 0;
+  }
+
+  .anamnese-form__field > label,
+  .anamnese-form__group legend {
+    font-weight: var(--weight-medium);
+    font-size: var(--step--1);
+    padding: 0;
+  }
+
+  .anamnese-form__group legend {
+    margin-bottom: var(--space-2xs);
+  }
+
+  .anamnese-form__marker {
+    color: var(--color-accent-text);
+  }
+
+  .anamnese-form__optional,
+  .anamnese-form__help {
+    font-weight: var(--weight-regular);
+    color: var(--color-text-muted);
+    font-size: var(--step--1);
+  }
+
+  .anamnese-form__field input:not([type="radio"], [type="checkbox"]),
+  .anamnese-form__field textarea {
+    min-height: 44px;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-text);
+    width: 100%;
+  }
+
+  .anamnese-form__field textarea {
+    min-height: 7rem;
+    resize: vertical;
+  }
+
+  .anamnese-form__field input[type="number"] {
+    max-width: 8rem;
+  }
+
+  .anamnese-form__options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: var(--space-2xs) var(--space-sm);
+  }
+
+  .anamnese-form__option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .anamnese-form__option input,
+  .anamnese-form__consent input {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-accent-text);
+  }
+
+  .anamnese-form__other {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-2xs);
+  }
+
+  .anamnese-form__other label {
+    font-size: var(--step--1);
+    white-space: nowrap;
+  }
+
+  .anamnese-form__other input {
+    max-width: 24rem;
+  }
+
+  [aria-invalid="true"] > input,
+  .anamnese-form__field input[aria-invalid="true"],
+  .anamnese-form__field textarea[aria-invalid="true"] {
+    border-color: var(--color-accent-text);
+  }
+
+  .anamnese-form__error {
+    color: var(--color-accent-text);
+    font-size: var(--step--1);
+    min-height: 1.2em;
+  }
+
+  .anamnese-form__consent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: var(--space-2xs) var(--space-xs);
+  }
+
+  .anamnese-form__consent input {
+    margin-top: 2px;
+  }
+
+  .anamnese-form__consent label {
+    font-weight: var(--weight-regular);
+    font-size: var(--step-0);
+  }
+
+  .anamnese-form__consent .anamnese-form__error {
+    grid-column: 1 / -1;
+  }
+
+  .anamnese-form :global(.anamnese-form__submit) {
+    align-self: flex-start;
+  }
+</style>

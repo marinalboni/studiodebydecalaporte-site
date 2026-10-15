@@ -19,7 +19,7 @@ const NAV_LABELS: Partial<Record<SectionId, string>> = {
 
 const navItems = site.sections
   .filter((section) => section.enabled && NAV_LABELS[section.id])
-  .map((section) => ({ href: `#${section.id}`, label: NAV_LABELS[section.id]! }));
+  .map((section) => ({ href: `/#${section.id}`, label: NAV_LABELS[section.id]! }));
 
 const socialLinks = [
   { href: site.social.instagram, label: "Instagram" },
@@ -72,6 +72,10 @@ const copyrightText = fill(copy.footer.copyrightTemplate, {
         {navItems.map((item) => (
           <li><a href={item.href}>{item.label}</a></li>
         ))}
+        <li><a href="/minha-historia">{copy.footer.storyLinkText}</a></li>
+        {site.ui.showAnamneseInFooter && (
+          <li><a href="/ficha-de-anamnese">{copy.footer.anamneseLinkText}</a></li>
+        )}
         <li><a href="/politica-de-privacidade">{copy.footer.privacyLinkText}</a></li>
       </ul>
     </nav>
@@ -106,9 +110,10 @@ const copyrightText = fill(copy.footer.copyrightTemplate, {
 
   .site-footer__grid {
     display: grid;
-    gap: var(--space-lg);
-    padding-block: var(--space-xl);
+    gap: var(--space-lg) var(--space-xl);
+    padding-block: var(--space-xl) var(--space-lg);
     grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    align-items: start;
   }
 
   .site-footer__business-name {
@@ -126,7 +131,13 @@ const copyrightText = fill(copy.footer.copyrightTemplate, {
 
   .site-footer__heading {
     font-size: var(--step-0);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
+
+  /* Capped width so the times stay next to their day instead of drifting
+     to the far edge of a wide column. */
+  .site-footer__hours-list {
+    max-width: 16rem;
   }
 
   .site-footer__hours-row {
@@ -142,20 +153,42 @@ const copyrightText = fill(copy.footer.copyrightTemplate, {
     margin: 0;
   }
 
+  /* Same size and rhythm as the hours list. The nav runs in two columns so
+     nine links don't make it the tallest column by far. */
   .site-footer__nav ul,
   .site-footer__social ul {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2xs);
+    gap: var(--space-3xs);
+    font-size: var(--step--1);
   }
 
-  /* Extra bottom padding equal to the floating WhatsApp button's footprint
-     (0 when it's disabled) so the copyright line is never stuck under it. */
+  .site-footer__nav ul {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: var(--space-3xs) var(--space-lg);
+  }
+
+  .site-footer__nav li,
+  .site-footer__social li {
+    padding-block: var(--space-3xs);
+  }
+
+  /* On mobile the bottom padding includes the floating WhatsApp button's
+     footprint (0 when it's disabled) so the copyright line is never stuck
+     under it. On desktop the short, left-aligned line never reaches the
+     button in the right corner, so no extra room is needed. */
   .site-footer__bottom {
     border-top: 1px solid var(--color-border);
     padding-top: var(--space-sm);
     padding-bottom: calc(var(--space-sm) + var(--floating-cta-clearance, 0px));
     font-size: var(--step--1);
     color: var(--color-text-muted);
+  }
+
+  @media (min-width: 900px) {
+    .site-footer__bottom {
+      padding-bottom: var(--space-md);
+    }
   }
 </style>

@@ -18,7 +18,8 @@ const NAV_LABELS: Partial<Record<SectionId, string>> = {
 
 const navItems = site.sections
   .filter((section) => section.enabled && NAV_LABELS[section.id])
-  .map((section) => ({ href: `#${section.id}`, label: NAV_LABELS[section.id]! }));
+  // "/#id" so the links also work from /minha-historia and the other subpages.
+  .map((section) => ({ href: `/#${section.id}`, label: NAV_LABELS[section.id]! }));
 ---
 
 <header class="site-header">

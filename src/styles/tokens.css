@@ -19,23 +19,31 @@
   /* ---------------------------------------------------------------------
    * COLOR — exactly 3 brand colors, each with a "-contrast" text color that
    * is readable on top of it (check contrast after changing either side).
-   * --color-accent is reserved for primary CTAs (the WhatsApp buttons etc.).
+   * --color-accent is reserved for the FILL of primary CTAs (the WhatsApp
+   * buttons etc.), with --color-accent-contrast as their text.
+   * Wherever the accent appears as text, an icon, an underline, a border or
+   * a focus ring on a light background, use --color-accent-text instead: a
+   * darker shade of the accent that keeps >= 4.5:1 against --color-bg,
+   * --color-surface and --color-secondary. It also outlines accent-filled
+   * buttons so a light accent stays visible against the page.
    * ------------------------------------------------------------------- */
-  --color-primary: #7a4b3a; /* TODO: replace — placeholder warm terracotta */
-  --color-primary-contrast: #fff8f5;
+  /* Brand */
+  --color-primary: #4a2270;            /* deep violet: headings accents, outline button, theme color */
+  --color-primary-contrast: #fbf8ff;
 
-  --color-secondary: #e8c7b8; /* TODO: replace — placeholder soft blush */
-  --color-secondary-contrast: #3a241d;
+  --color-secondary: #ece3f7;          /* soft lavender: section backgrounds, cards, highlights */
+  --color-secondary-contrast: #2b1642;
 
-  --color-accent: #c9184a; /* TODO: replace — placeholder rose, used for CTAs */
-  --color-accent-contrast: #ffffff;
+  --color-accent: #c4a3ec;             /* light purple: CTA buttons, floating WhatsApp button */
+  --color-accent-contrast: #2b1642;    /* dark text on the light purple buttons */
+  --color-accent-text: #6b3fa0;        /* accent as text, icons, borders and focus rings on light backgrounds */
 
   /* Neutrals */
-  --color-bg: #fffaf7;
+  --color-bg: #fcfaff;
   --color-surface: #ffffff;
-  --color-text: #2a1f1b;
-  --color-text-muted: #6b5c55;
-  --color-border: #e8ddd6;
+  --color-text: #241b2e;
+  --color-text-muted: #5f5670;
+  --color-border: #e4dcef;
 
   /* ---------------------------------------------------------------------
    * TYPOGRAPHY

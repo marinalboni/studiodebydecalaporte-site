@@ -3,11 +3,14 @@ import site from "../../config/site";
 import copy from "../../content/copy";
 import { fill } from "../../lib/fill";
 import WhatsAppLink from "../ui/WhatsAppLink.astro";
+import Button from "../ui/Button.astro";
 
-const { items, showPrices } = site.services;
+const { categories, showPrices } = site.services;
 const currencyFormatter = new Intl.NumberFormat(site.locale, {
   style: "currency",
   currency: site.currency,
+  // "R$ 800" rather than "R$ 800,00"; prices with cents keep them.
+  trailingZeroDisplay: "stripIfInteger",
 });
 ---
 
@@ -17,43 +20,82 @@ const currencyFormatter = new Intl.NumberFormat(site.locale, {
     <h2 id="services-heading">{copy.services.heading}</h2>
     <p class="section-intro">{copy.services.intro}</p>
 
-    <ul class="services__grid">
-      {
-        items.map((service) => {
-          const message = fill(copy.services.whatsappMessageTemplate, {
-            service: service.name,
-          });
+    {
+      categories
+        .filter((category) => category.items.length > 0)
+        .map((category) => {
+          const headingId = `services-${category.id}-heading`;
           return (
-            <li class="service-card">
-              <h3>{service.name}</h3>
-              {service.description && <p class="service-card__description">{service.description}</p>}
-              <div class="service-card__meta">
-                {showPrices && service.price !== undefined && (
-                  <span class="service-card__price">
-                    {service.priceFrom ? `${copy.services.priceFromPrefix} ` : ""}
-                    {currencyFormatter.format(service.price)}
-                  </span>
-                )}
-                {service.duration && (
-                  <span class="service-card__duration">
-                    {copy.services.durationLabel}: {service.duration}
-                  </span>
-                )}
-              </div>
-              <WhatsAppLink message={message} variant="outline">
-                {copy.services.ctaLabel}
-              </WhatsAppLink>
-            </li>
+            <div
+              class="services__category"
+              role={category.title ? "group" : undefined}
+              aria-labelledby={category.title ? headingId : undefined}
+            >
+              {category.title && <h3 id={headingId} class="services__category-heading">{category.title}</h3>}
+              {category.intro && <p class="services__category-intro">{category.intro}</p>}
+
+              <ul class="services__grid">
+                {category.items.map((service) => {
+                  const message = fill(copy.services.whatsappMessageTemplate, {
+                    service: service.name,
+                  });
+                  return (
+                    <li class:list={["service-card", { "service-card--featured": service.featured }]}>
+                      {service.featured && <p class="service-card__badge">{copy.services.featuredBadge}</p>}
+                      <h4 class="service-card__name">{service.name}</h4>
+                      {service.description && <p class="service-card__description">{service.description}</p>}
+                      <div class="service-card__meta">
+                        {showPrices && (
+                          <span class="service-card__price">
+                            {service.price === undefined
+                              ? copy.services.priceOnRequestLabel
+                              : `${service.priceFrom ? `${copy.services.priceFromPrefix} ` : ""}${currencyFormatter.format(service.price)}`}
+                          </span>
+                        )}
+                        {service.duration && (
+                          <span class="service-card__duration">
+                            {copy.services.durationLabel}: {service.duration}
+                          </span>
+                        )}
+                      </div>
+                      <div class="service-card__actions">
+                        <WhatsAppLink message={message} variant={service.featured ? "primary" : "outline"}>
+                          {copy.services.ctaLabel}
+                        </WhatsAppLink>
+                        {service.anamneseLink && (
+                          <Button href="/ficha-de-anamnese" variant="outline">
+                            {copy.services.anamneseCtaLabel}
+                          </Button>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           );
         })
-      }
-    </ul>
+    }
   </div>
 </section>
 
 <style>
   .services {
     padding-block: var(--space-2xl);
+  }
+
+  .services__category {
+    margin-top: var(--space-xl);
+  }
+
+  .services__category-heading {
+    font-size: var(--step-2);
+  }
+
+  .services__category-intro {
+    margin-top: var(--space-2xs);
+    color: var(--color-text-muted);
+    max-width: 60ch;
   }
 
   .services__grid {
@@ -73,6 +115,37 @@ const currencyFormatter = new Intl.NumberFormat(site.locale, {
     border-radius: var(--radius-md);
   }
 
+  .service-card__name {
+    font-size: var(--step-1);
+  }
+
+  /* The featured service spans the whole row and carries the accent, so the
+     client's specialty reads first. */
+  .service-card--featured {
+    grid-column: 1 / -1;
+    border: 2px solid var(--color-accent-text);
+    box-shadow: var(--shadow-md);
+  }
+
+  .service-card--featured .service-card__name {
+    font-size: var(--step-2);
+  }
+
+  .service-card--featured .service-card__description {
+    font-size: var(--step-0);
+    max-width: 60ch;
+  }
+
+  .service-card__badge {
+    align-self: flex-start;
+    padding: var(--space-3xs) var(--space-xs);
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font-size: var(--step--1);
+    font-weight: var(--weight-medium);
+  }
+
   .service-card__description {
     color: var(--color-text-muted);
     font-size: var(--step--1);
@@ -90,8 +163,11 @@ const currencyFormatter = new Intl.NumberFormat(site.locale, {
     color: var(--color-primary);
   }
 
-  .service-card :global(.button) {
-    align-self: flex-start;
-    margin-top: var(--space-2xs);
+  .service-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: auto;
+    padding-top: var(--space-2xs);
   }
 </style>

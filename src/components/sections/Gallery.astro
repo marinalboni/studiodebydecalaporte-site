@@ -142,7 +142,10 @@ const validPhotos = photos.filter((photo): photo is NonNullable<typeof photo> =>
     transform: scale(1.03);
   }
 
+  /* margin: auto restores the browser's centering of a modal <dialog>,
+     which the global `* { margin: 0 }` reset removes. */
   .gallery-lightbox {
+    margin: auto;
     border: none;
     padding: 0;
     background: transparent;

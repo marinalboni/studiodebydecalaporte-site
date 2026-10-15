@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import site from "../config/site";
+import copy from "../content/copy";
+import { fill } from "../lib/fill";
+import { parseRichText } from "../lib/richtext";
+import WhatsAppLink from "../components/ui/WhatsAppLink.astro";
+
+const story = copy.pages.story;
+const title = fill(story.title, { businessName: site.business.name });
+const paragraphs = parseRichText(story.body);
+---
+
+<BaseLayout title={title} description={story.description} includeStructuredData={false}>
+  <article class="container story">
+    <h1>{story.heading}</h1>
+
+    {
+      paragraphs.map((segments) => (
+        <p>
+          {segments.map((segment) => (segment.bold ? <strong>{segment.text}</strong> : segment.text))}
+        </p>
+      ))
+    }
+
+    <aside class="story__cta">
+      <p>{story.ctaBody}</p>
+      <WhatsAppLink message={site.contact.whatsappDefaultMessage}>{story.ctaLabel}</WhatsAppLink>
+    </aside>
+  </article>
+</BaseLayout>
+
+<style>
+  .story {
+    padding-block: var(--space-2xl);
+    max-width: var(--container-width-sm);
+  }
+
+  .story h1 {
+    margin-bottom: var(--space-lg);
+  }
+
+  .story p {
+    max-width: 65ch;
+  }
+
+  .story p + p {
+    margin-top: var(--space-sm);
+  }
+
+  .story__cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+</style>

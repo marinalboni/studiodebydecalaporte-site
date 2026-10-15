@@ -39,7 +39,7 @@ export interface DayDisplay {
   day: Weekday;
   label: string;
   closed: boolean;
-  /** Human-readable hours, e.g. "09:00–18:00" or "09:00–12:00, 13:00–18:00". Empty when closed. */
+  /** Human-readable hours, e.g. "09:00 – 18:00" or "09:00 – 12:00, 13:00 – 18:00". Empty when closed. */
   hoursText: string;
   /** Raw blocks, for rendering <time datetime="09:00"> per block. */
   blocks: { opens: string; closes: string }[];
@@ -60,7 +60,7 @@ export function buildHoursDisplay(
     closed: day.closed,
     hoursText: day.closed
       ? closedLabel
-      : day.blocks.map((b) => `${b.opens}–${b.closes}`).join(", "),
+      : day.blocks.map((b) => `${b.opens} – ${b.closes}`).join(", "),
     blocks: day.closed ? [] : day.blocks,
   }));
 }

@@ -1,5 +1,5 @@
 ---
-import site from "../../config/site";
+import { publishedFaq } from "../../config/site";
 import copy from "../../content/copy";
 ---
 
@@ -11,7 +11,7 @@ import copy from "../../content/copy";
 
     <div class="faq__list">
       {
-        site.faq.map((item) => (
+        publishedFaq.map((item) => (
           <details class="faq__item">
             <summary>{item.question}</summary>
             <p>{item.answer}</p>

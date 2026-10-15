@@ -11,7 +11,7 @@ Everything specific to one client lives in exactly **four places**:
 | Business facts (name, domain, NAP, hours, services, prices, schema type, social, form provider, floating WhatsApp button) | `src/config/site.ts` |
 | All visible copy (headings, CTAs, form labels, legal text, per-page SEO text) | `src/content/copy.ts` |
 | Theme (3 brand colors, type scale, spacing) + font files | `src/styles/tokens.css` + `src/styles/fonts.ts` |
-| Photos + logo | `src/assets/brand/` and `src/assets/images/{hero,gallery,about,space}/` |
+| Photos + logo | `src/assets/brand/` and `src/assets/images/{hero,gallery,about}/` |
 
 Everything else is derived from those: `astro.config.mjs` reads `siteUrl`
 from `site.ts`; `robots.txt` and `site.webmanifest` are generated at build
@@ -109,7 +109,7 @@ replace them before launch using the checklist below. `launched: false` in
    `src/styles/fonts.ts` (CSS imports + the `?url` preload imports), and
    update `--font-heading`/`--font-body` in `tokens.css`.
 5. **Images** — replace every file in `src/assets/brand/` and
-   `src/assets/images/{hero,gallery,about,space}/`, keeping the filenames
+   `src/assets/images/{hero,gallery,about}/`, keeping the filenames
    referenced in `site.ts.images` (or update those filenames too). Update
    every `alt` text in `site.ts.images` to describe the real photo.
    Regenerate `public/favicon.svg`, `public/favicon.ico`,
@@ -139,6 +139,27 @@ replace them before launch using the checklist below. `launched: false` in
    `index, follow`.
 10. Submit the sitemap (`https://<domain>/sitemap-index.xml`) in Google
     Search Console, and set up/verify the Google Business Profile.
+
+## Client-specific: hair questionnaire (`/ficha-de-anamnese`)
+
+This page belongs to this client only — don't carry it back into the
+template. It's a Netlify Forms form named `ficha-de-anamnese`; every
+question, option and message lives in `copy.pages.anamnese` in `copy.ts`,
+and `AnamneseForm.astro` only renders them. The page is `noindex, nofollow`,
+excluded from the sitemap, not in the main nav, and only linked from the
+footer when `ui.showAnamneseInFooter` is `true` in `site.ts` (default
+`false`: the owner sends the link to clients directly). After submitting,
+the visitor lands on `/obrigado?ficha=1`, which swaps in a questionnaire-
+specific thank-you message (needs JS; without it the generic text shows).
+
+**Submissions contain health data (dados pessoais sensíveis under LGPD).**
+In the Netlify UI (Site configuration → Forms):
+
+- Send form notifications for `ficha-de-anamnese` **only to the owner's
+  e-mail** — no team members, Slack or webhook integrations.
+- **Periodically delete old submissions** (Forms → `ficha-de-anamnese` →
+  select → Delete) once they're no longer needed for the client's care, as
+  promised in the privacy policy.
 
 ## Switching the form provider
 
@@ -178,7 +199,7 @@ src/
   styles/global.css       # reset, base styles, .container, .sr-only, skip link, floating-CTA clearance
   styles/fonts.ts         # @fontsource imports + woff2 preload URLs (the only file to edit for fonts)
   assets/brand/           # logo, favicon source, default OG image
-  assets/images/{hero,gallery,about,space}/
+  assets/images/{hero,gallery,about}/
   lib/
     fill.ts               # {token} interpolation for copy strings
     hours.ts              # business-hours formatting + schema.org hours
@@ -191,7 +212,7 @@ src/
     SEO.astro, StructuredData.astro
     Header.astro, MobileMenu.astro, Footer.astro, FloatingWhatsApp.astro
     sections/{Hero,Services,Gallery,About,Testimonials,Location,FAQ,Contact}.astro
-    ui/{Button,WhatsAppLink,MapFacade,ContactForm}.astro
+    ui/{Button,WhatsAppLink,MapEmbed,ContactForm}.astro
   layouts/BaseLayout.astro
   pages/{index,obrigado,politica-de-privacidade,404}.astro
   pages/robots.txt.ts       # generated from site.siteUrl

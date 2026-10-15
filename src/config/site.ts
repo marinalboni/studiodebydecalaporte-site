@@ -38,7 +38,11 @@ export interface Service {
   id: string;
   name: string;
   description?: string;
-  /** Price in the site's `currency`. Omit entirely if truly variable and not quotable. */
+  /**
+   * Price in the site's `currency`. Omit when it depends on an evaluation —
+   * the card then shows copy.services.priceOnRequestLabel and the JSON-LD
+   * offer carries no price.
+   */
   price?: number;
   /** When true, price is displayed as "a partir de {price}" (starting at). */
   priceFrom?: boolean;
@@ -46,6 +50,20 @@ export interface Service {
   duration?: string;
   /** Featured services are highlighted / shown first in compact layouts. */
   featured?: boolean;
+  /** Adds a secondary "Preencher anamnese" button linking to /ficha-de-anamnese (client-specific). */
+  anamneseLink?: boolean;
+}
+
+/**
+ * A group of services rendered as its own <h3> subsection. A client with a
+ * single flat list uses one category with no `title` — the subsection
+ * heading is then omitted and the grid renders exactly as a flat list.
+ */
+export interface ServiceCategory {
+  id: string;
+  title?: string;
+  intro?: string;
+  items: Service[];
 }
 
 export interface Testimonial {
@@ -56,6 +74,7 @@ export interface Testimonial {
 
 export interface FaqItem {
   question: string;
+  /** Leave empty ("") to keep a question drafted but hidden from the page and the JSON-LD. */
   answer: string;
 }
 
@@ -116,7 +135,8 @@ export interface SiteConfig {
     legalName?: string;
     shortDescription: string;
     longDescription: string;
-    foundingYear: number;
+    /** Omit when unknown — foundingDate is then left out of the JSON-LD. */
+    foundingYear?: number;
     /** schema.org price range symbol, e.g. "$$". */
     priceRange: string;
     /** schema.org type — a LocalBusiness subtype. Examples: "HairSalon", "RoofingContractor", "Plumber". */
@@ -131,7 +151,8 @@ export interface SiteConfig {
     whatsappNumber: string;
     /** Default prefilled message for generic (non-service-specific) WhatsApp links. */
     whatsappDefaultMessage: string;
-    email: string;
+    /** Omit when the client has no public e-mail — the contact list and JSON-LD skip it. */
+    email?: string;
   };
 
   address: {
@@ -144,7 +165,8 @@ export interface SiteConfig {
     postalCode: string;
     /** ISO 3166-1 alpha-2 country code. */
     country: string;
-    geo: {
+    /** Omit until exact coordinates are known — GeoCoordinates is then left out of the JSON-LD. */
+    geo?: {
       lat: number;
       lng: number;
     };
@@ -161,7 +183,8 @@ export interface SiteConfig {
 
   services: {
     showPrices: boolean;
-    items: Service[];
+    /** Rendered in this order. Use a single untitled category for a flat list. */
+    categories: ServiceCategory[];
   };
 
   paymentMethods: string[];
@@ -169,7 +192,7 @@ export interface SiteConfig {
 
   about: {
     ownerName: string;
-    yearsExperience: number;
+    yearsExperience?: number;
     certifications: string[];
   };
 
@@ -193,6 +216,8 @@ export interface SiteConfig {
 
   ui: {
     floatingWhatsApp: FloatingWhatsAppConfig;
+    /** Show a footer link to /ficha-de-anamnese. The page always exists; it's normally shared by link only. */
+    showAnamneseInFooter: boolean;
   };
 
   /**
@@ -205,7 +230,6 @@ export interface SiteConfig {
     logo: { file: string; alt: string };
     hero: { file: string; alt: string };
     about: { file: string; alt: string };
-    space: { file: string; alt: string }[];
     gallery: { file: string; alt: string }[];
   };
 
@@ -213,6 +237,22 @@ export interface SiteConfig {
 
   form: FormConfig;
 }
+
+const businessName = "Studio Dé by Andréa Laporte";
+
+const address = {
+  street: "Av. Francisco Gulin",
+  number: "1579",
+  complement: "Casa 2",
+  neighborhood: "Santa Felicidade",
+  city: "Curitiba",
+  state: "PR",
+  postalCode: "82410-010",
+  country: "BR",
+};
+
+/** Google Business Profile share link (opens her listing with the correct pin). */
+const googleBusinessProfileUrl = "https://share.google/k3QyXdKDiWl5m0CNh";
 
 const site: SiteConfig = {
   locale: "pt-BR",
@@ -224,205 +264,267 @@ const site: SiteConfig = {
   copyLocale: "pt-BR",
 
   business: {
-    name: "Studio de By Decá La Porte",
-    shortName: "Studio Decá",
+    name: businessName,
+    shortName: "Studio Dé",
     // TODO: confirm whether a separate legal/trading name should appear in the footer and schema.
     legalName: undefined,
     shortDescription:
-      "Salão de cabeleireiro domiciliar, atendimento personalizado e com hora marcada.",
-    // TODO: replace with the real longer description (2-4 sentences) for the About section / meta description guidance.
+      "Terapia capilar, maquiagem, sobrancelhas e penteados em Santa Felicidade, Curitiba, com atendimento exclusivo e sem pressa.",
+    // Exactly as published on her Google Business Profile — keep the two in sync.
     longDescription:
-      "Studio de By Decá La Porte é um salão de cabeleireiro domiciliar que oferece atendimento individual, personalizado e com hora marcada, em um ambiente acolhedor e tranquilo.",
+      "Atendimento exclusivo com hora marcada. Entre em contato para agendar seu horário! O Studio Dé by Andréa Laporte é um espaço dedicado à beleza, autoestima e bem-estar. Sob os cuidados de Andréa, oferece atendimento personalizado e acolhedor, respeitando as necessidades de cada pessoa. Os serviços incluem terapia capilar com protocolos personalizados, argiloterapia, chaterapia, vacuoterapia, ozonoterapia, laser capilar e microagulhamento com exossomos, além de corte de cabelo, maquiagem, design de sobrancelhas e penteados. Aqui, cada atendimento é único, com atenção aos detalhes e sem pressa, porque cuidar de você é tão importante quanto realçar sua beleza.",
     // TODO: confirm the year the business started.
-    foundingYear: 2010,
+    foundingYear: undefined,
     priceRange: "$$",
-    schemaType: "HairSalon",
+    // Matches her Google Business Profile category ("Salão de beleza").
+    schemaType: "BeautySalon",
   },
 
   contact: {
-    // TODO: replace with the real phone number.
-    phoneDisplay: "(11) 90000-0000",
-    phoneE164: "+5511900000000",
-    whatsappNumber: "5511900000000",
-    whatsappDefaultMessage: "Olá! Gostaria de agendar um horário.",
-    // TODO: replace with the real contact e-mail.
-    email: "contato@studiodebydecalaporte.com.br",
+    phoneDisplay: "(41) 99976-3703",
+    phoneE164: "+5541999763703",
+    whatsappNumber: "5541999763703",
+    whatsappDefaultMessage: "Olá, Andréa! Gostaria de agendar um horário.",
+    // TODO: add the public contact e-mail.
+    email: undefined,
   },
 
   address: {
-    // TODO: replace with the real street address.
-    street: "Rua Exemplo",
-    number: "123",
-    complement: undefined,
-    neighborhood: "Bairro Exemplo",
-    city: "São Paulo",
-    state: "SP",
-    postalCode: "00000-000",
-    country: "BR",
-    geo: {
-      // TODO: replace with real coordinates (Google Maps → right-click → "What's here?").
-      lat: -23.55052,
-      lng: -46.633308,
-    },
-    // TODO: replace with the real "share" link from Google Maps for this address.
-    googleMapsUrl: "https://maps.google.com/?q=Studio+de+By+Deca+La+Porte",
-    // TODO: replace with the real Google Maps embed URL (Maps → Share → Embed a map).
-    mapEmbedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d0!2d-46.633308!3d-23.55052!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzAyLjAiUyA0NsKwMzcnNTkuNyJX!5e0!3m2!1spt-BR!2sbr!4v0",
+    ...address,
+    // Pin of her Google Business Profile listing (the street-address geocode lands ~25 m off).
+    geo: { lat: -25.3851078, lng: -49.3387907 },
+    googleMapsUrl: googleBusinessProfileUrl,
+    // Searching by business name resolves to her listing, so the embed shows the
+    // right pin and her business card. Searching by street address does not.
+    mapEmbedUrl: `https://www.google.com/maps?q=${encodeURIComponent(
+      `${businessName}, ${address.city}`,
+    )}&output=embed`,
     // Client confirmed the exact street/number can be public (it's on her Google listing).
     showFullAddress: true,
   },
 
   hours: {
     days: [
-      {
-        day: "monday",
-        closed: true,
-        blocks: [],
-      },
-      {
-        day: "tuesday",
-        closed: false,
-        blocks: [{ opens: "09:00", closes: "18:00" }],
-      },
-      {
-        day: "wednesday",
-        closed: false,
-        blocks: [{ opens: "09:00", closes: "18:00" }],
-      },
-      {
-        day: "thursday",
-        closed: false,
-        blocks: [{ opens: "09:00", closes: "18:00" }],
-      },
-      {
-        day: "friday",
-        closed: false,
-        blocks: [{ opens: "09:00", closes: "18:00" }],
-      },
-      {
-        day: "saturday",
-        closed: false,
-        blocks: [{ opens: "09:00", closes: "14:00" }],
-      },
-      {
-        day: "sunday",
-        closed: true,
-        blocks: [],
-      },
+      { day: "monday", closed: false, blocks: [{ opens: "08:00", closes: "20:00" }] },
+      { day: "tuesday", closed: false, blocks: [{ opens: "08:00", closes: "20:00" }] },
+      { day: "wednesday", closed: false, blocks: [{ opens: "08:00", closes: "20:00" }] },
+      { day: "thursday", closed: false, blocks: [{ opens: "08:00", closes: "20:00" }] },
+      { day: "friday", closed: false, blocks: [{ opens: "08:00", closes: "20:00" }] },
+      { day: "saturday", closed: false, blocks: [{ opens: "09:00", closes: "18:00" }] },
+      { day: "sunday", closed: false, blocks: [{ opens: "09:00", closes: "18:00" }] },
     ],
-    // TODO: confirm hours and whether a lunch-break split applies on any day (example of a split day: blocks: [{opens:"09:00",closes:"12:00"},{opens:"13:00",closes:"18:00"}]).
-    notes: "Atendimento somente com hora marcada.",
+    notes: "Atendimento exclusivo com hora marcada.",
   },
 
   services: {
     showPrices: true,
-    // TODO: replace with the real service list, descriptions, prices and durations.
-    items: [
+    categories: [
       {
-        id: "corte-feminino",
-        name: "Corte Feminino",
-        description: "Corte personalizado de acordo com o formato do rosto e tipo de cabelo.",
-        price: 80,
-        priceFrom: true,
-        duration: "45 min",
-        featured: true,
+        id: "terapia-capilar",
+        title: "Terapia capilar",
+        intro:
+          "Minha especialidade: cuidados com o couro cabeludo e os fios, sempre a partir de uma avaliação.",
+        items: [
+          {
+            id: "terapia-capilar-personalizada",
+            name: "Terapia Capilar Personalizada",
+            description:
+              "Avaliação do couro cabeludo e dos fios, seguida de um protocolo personalizado para as suas necessidades.",
+            featured: true,
+            anamneseLink: true,
+          },
+          {
+            id: "microagulhamento-exossomos",
+            name: "Microagulhamento + Exossomos",
+            description:
+              "Microagulhamento do couro cabeludo associado à aplicação de exossomos, realizado após avaliação como parte de um protocolo personalizado.",
+            price: 800,
+            priceFrom: true,
+          },
+          {
+            id: "drug-delivery",
+            name: "Drug Delivery",
+            description:
+              "Técnica que facilita a entrega de ativos ao couro cabeludo, aplicada conforme o protocolo definido na avaliação.",
+            price: 300,
+            priceFrom: true,
+          },
+          {
+            id: "massagem-capilar-terapeutica",
+            name: "Massagem Capilar Terapêutica",
+            description:
+              "Massagem no couro cabeludo que proporciona relaxamento e bem-estar durante o cuidado com os fios.",
+            price: 80,
+          },
+          {
+            id: "ozonoterapia-capilar",
+            name: "Ozonoterapia Capilar",
+            description:
+              "Aplicação de ozônio no couro cabeludo como parte do cuidado com a higiene e o equilíbrio da região.",
+            price: 160,
+          },
+          {
+            id: "laser-capilar",
+            name: "Laser Capilar",
+            description: "Aplicação de laser no couro cabeludo como complemento do protocolo de cuidado capilar.",
+            price: 80,
+          },
+          {
+            id: "alta-frequencia-capilar",
+            name: "Alta Frequência Capilar",
+            description:
+              "Aplicação de alta frequência no couro cabeludo, recurso que complementa o cuidado com a saúde da região.",
+            price: 80,
+          },
+          {
+            id: "led-capilar",
+            name: "LED Capilar",
+            description: "Sessão de luz de LED no couro cabeludo, integrada ao protocolo de cuidado capilar.",
+            price: 70,
+          },
+          {
+            id: "vacuoterapia-capilar",
+            name: "Vacuoterapia Capilar",
+            description:
+              "Técnica de sucção suave no couro cabeludo que favorece o relaxamento e complementa o protocolo capilar.",
+            price: 130,
+          },
+          {
+            id: "chaterapia-capilar",
+            name: "Chaterapia Capilar",
+            description:
+              "Aplicação de chás e ervas no couro cabeludo e nos fios, um cuidado natural para o equilíbrio da região.",
+            price: 130,
+          },
+          {
+            id: "argiloterapia-capilar",
+            name: "Argiloterapia Capilar",
+            description:
+              "Aplicação de argilas no couro cabeludo, um cuidado que ajuda a manter o equilíbrio e a sensação de limpeza.",
+            price: 160,
+          },
+        ],
       },
       {
-        id: "escova",
-        name: "Escova",
-        description: "Escova modeladora com acabamento liso ou com movimento.",
-        price: 60,
-        priceFrom: true,
-        duration: "40 min",
-        featured: true,
-      },
-      {
-        id: "coloracao",
-        name: "Coloração",
-        description: "Coloração completa com produtos profissionais.",
-        price: 150,
-        priceFrom: true,
-        duration: "2h",
-        featured: true,
-      },
-      {
-        id: "mechas",
-        name: "Mechas / Luzes",
-        description: "Técnica de mechas ou luzes personalizada para o seu estilo.",
-        price: 220,
-        priceFrom: true,
-        duration: "2h30",
-      },
-      {
-        id: "hidratacao",
-        name: "Hidratação",
-        description: "Tratamento de hidratação profunda para cabelos ressecados.",
-        price: 70,
-        priceFrom: true,
-        duration: "30 min",
-      },
-      {
-        id: "penteado",
-        name: "Penteado para Eventos",
-        description: "Penteados para festas, casamentos e eventos especiais.",
-        price: 120,
-        priceFrom: true,
-        duration: "1h",
+        id: "beleza",
+        title: "Beleza",
+        intro: "Cabelo, maquiagem e sobrancelhas.",
+        items: [
+          {
+            id: "escova",
+            name: "Escova",
+            description: "Escova modeladora com acabamento liso ou com movimento.",
+            price: 120,
+            priceFrom: true,
+          },
+          {
+            id: "sobrancelha-design",
+            name: "Sobrancelha com Design",
+            description: "Design de sobrancelhas pensado para valorizar o formato do seu rosto.",
+            price: 80,
+          },
+          {
+            id: "limpeza-sobrancelha",
+            name: "Limpeza de Sobrancelha",
+            description: "Remoção dos pelos fora do desenho, mantendo o formato natural das sobrancelhas.",
+            price: 60,
+          },
+          {
+            id: "penteado-maquiagem",
+            name: "Penteado + Maquiagem",
+            description: "Combinação de penteado e maquiagem para eventos e ocasiões especiais.",
+            price: 280,
+          },
+          {
+            id: "maquiagem-profissional",
+            name: "Maquiagem Profissional",
+            description: "Maquiagem personalizada para o dia a dia, eventos ou ocasiões especiais.",
+            price: 140,
+            priceFrom: true,
+          },
+          {
+            id: "penteado",
+            name: "Penteado",
+            description: "Penteados para festas, casamentos e eventos especiais.",
+            price: 120,
+            priceFrom: true,
+          },
+          {
+            id: "corte-masculino",
+            name: "Corte Masculino",
+            description: "Corte masculino feito com atenção ao seu estilo e ao formato do rosto.",
+            price: 60,
+          },
+          {
+            id: "corte-feminino",
+            name: "Corte Feminino",
+            description: "Corte personalizado de acordo com o formato do rosto e o tipo de cabelo.",
+            price: 120,
+          },
+        ],
       },
     ],
   },
 
-  // TODO: confirm accepted payment methods.
-  paymentMethods: ["Dinheiro", "Pix", "Cartão de Débito", "Cartão de Crédito"],
-  // TODO: confirm amenities (home-based business — things like parking and accessibility matter here).
-  amenities: ["Estacionamento na rua", "Wi-Fi", "Ambiente climatizado"],
+  // TODO: confirm accepted payment methods (also fill the hidden FAQ answer below).
+  paymentMethods: [],
+  // TODO: confirm amenities (parking, accessibility).
+  amenities: [],
 
   about: {
-    // TODO: confirm the owner's name as she wants it displayed.
-    ownerName: "Decá La Porte",
-    // TODO: confirm years of experience.
-    yearsExperience: 15,
-    // TODO: list real courses/certifications.
-    certifications: ["Formação em Colorimetria", "Curso de Corte Avançado"],
+    ownerName: "Andréa Laporte",
+    yearsExperience: undefined,
+    // TODO: list real courses/certifications, or leave empty to hide the list.
+    certifications: [],
   },
 
-  // TODO: replace with real reviews (with permission), or leave empty to hide the section.
-  testimonials: [
-    {
-      author: "Cliente Satisfeita",
-      text: "Atendimento maravilhoso, super atenciosa e o resultado ficou incrível!",
-      source: "Google",
-    },
-    {
-      author: "Cliente Satisfeita",
-      text: "Ambiente aconchegante e profissional muito cuidadosa com o cabelo.",
-      source: "Google",
-    },
-  ],
+  // TODO: add real Google reviews (with permission). Empty hides the section.
+  testimonials: [],
 
-  // TODO: review/adjust FAQ content for accuracy before launch.
+  // Entries with an empty answer stay hidden (page and JSON-LD) until filled.
   faq: [
     {
       question: "Preciso agendar horário?",
-      answer: "Sim, o atendimento é feito somente com hora marcada, pelo WhatsApp.",
+      answer:
+        "Sim. O atendimento é exclusivo, com hora marcada. É só chamar no WhatsApp para escolher o melhor dia e horário.",
     },
     {
-      question: "O salão tem estacionamento?",
-      answer: "Há vagas disponíveis na rua, próximas ao local.",
+      question: "Quais são os horários de atendimento?",
+      answer:
+        "De segunda a sexta, das 8h às 20h, e aos sábados e domingos, das 9h às 18h, sempre com hora marcada.",
     },
     {
-      question: "Quais formas de pagamento são aceitas?",
-      answer: "Aceitamos dinheiro, Pix, cartão de débito e cartão de crédito.",
+      question: "Como funciona a terapia capilar?",
+      answer:
+        "Começa com uma conversa e uma avaliação do couro cabeludo e dos fios. A partir disso, é montado um protocolo personalizado para as suas necessidades.",
+    },
+    {
+      question: "Preciso preencher alguma ficha antes da terapia capilar?",
+      answer:
+        "Sim. Antes da primeira sessão, você recebe o link da ficha de anamnese, com perguntas sobre sua saúde e seus cabelos, para que o protocolo seja mais assertivo.",
+    },
+    {
+      question: "Onde fica o Studio Dé?",
+      answer: "Na Av. Francisco Gulin, 1579, Casa 2, no bairro Santa Felicidade, em Curitiba.",
+    },
+    {
+      question: "Quais são as formas de pagamento?",
+      // TODO: fill in the accepted payment methods.
+      answer: "",
+    },
+    {
+      question: "Tem estacionamento?",
+      // TODO: fill in the parking information.
+      answer: "",
     },
   ],
 
   social: {
-    // TODO: replace with the real social links. Omit any the client doesn't have.
+    // TODO: add the real social links. Omit any the client doesn't have.
     instagram: undefined,
     facebook: undefined,
     tiktok: undefined,
-    googleBusinessProfileUrl: undefined,
+    googleBusinessProfileUrl,
   },
 
   seo: {
@@ -437,30 +539,27 @@ const site: SiteConfig = {
       enabled: true,
       position: "right",
     },
+    showAnamneseInFooter: false,
   },
 
-  // TODO: replace every placeholder file + alt text below with real photos once available.
   images: {
-    logo: { file: "logo.svg", alt: "Studio de By Decá La Porte" },
+    // TODO: replace the placeholder wordmark with the real logo.
+    logo: { file: "logo.svg", alt: businessName },
     hero: {
-      file: "hero-01.jpg",
-      alt: "Interior aconchegante do Studio de By Decá La Porte",
+      file: "studio-de-lavatorio-luz-natural.jpg",
+      alt: "Lavatório do Studio Dé iluminado pela luz natural da janela",
     },
     about: {
-      file: "about-01.jpg",
-      alt: "Decá La Porte, cabeleireira e proprietária do Studio de By Decá La Porte",
+      file: "andrea-laporte-no-studio.jpg",
+      alt: "Andréa Laporte sentada na cadeira de atendimento do Studio Dé",
     },
-    space: [
-      { file: "space-01.jpg", alt: "Área de atendimento do salão" },
-      { file: "space-02.jpg", alt: "Recepção do salão" },
-    ],
     gallery: [
-      { file: "gallery-01.jpg", alt: "Corte e finalização realizados no salão" },
-      { file: "gallery-02.jpg", alt: "Coloração realizada no salão" },
-      { file: "gallery-03.jpg", alt: "Penteado para evento realizado no salão" },
-      { file: "gallery-04.jpg", alt: "Mechas realizadas no salão" },
-      { file: "gallery-05.jpg", alt: "Hidratação realizada no salão" },
-      { file: "gallery-06.jpg", alt: "Ambiente do salão" },
+      { file: "penteado-semipreso-com-acessorio.jpg", alt: "Penteado semipreso com cachos e acessório de cabelo" },
+      { file: "maquiagem-olhos-esfumados.jpg", alt: "Maquiagem com olhos esfumados e delineado" },
+      { file: "penteado-tranca-lateral.jpg", alt: "Penteado com trança lateral longa" },
+      { file: "corte-chanel.jpg", alt: "Corte chanel finalizado" },
+      { file: "penteado-coque-baixo.jpg", alt: "Penteado com coque baixo texturizado" },
+      { file: "escova-lisa-cabelo-longo.jpg", alt: "Escova lisa em cabelo longo" },
     ],
   },
 
@@ -480,5 +579,11 @@ const site: SiteConfig = {
     successPath: "/obrigado",
   },
 };
+
+/** Every service across all categories, in display order. */
+export const allServices: Service[] = site.services.categories.flatMap((category) => category.items);
+
+/** FAQ entries that have an answer — drafts with an empty answer stay hidden. */
+export const publishedFaq: FaqItem[] = site.faq.filter((item) => item.answer.trim() !== "");
 
 export default site;

@@ -15,7 +15,7 @@ const aboutImage = resolveImage(aboutImages, site.images.about.file);
 
 const tokens = {
   ownerName: site.about.ownerName,
-  yearsExperience: site.about.yearsExperience,
+  yearsExperience: site.about.yearsExperience ?? "",
 };
 const intro = fill(copy.about.intro, tokens);
 const storyParagraphs = parseRichText(fill(copy.about.story, tokens));
@@ -43,12 +43,15 @@ const storyParagraphs = parseRichText(fill(copy.about.story, tokens));
     <div class="about__copy">
       <p class="section-eyebrow">{copy.about.eyebrow}</p>
       <h2 id="about-heading">{copy.about.heading}</h2>
-      <p class="about__intro">{intro}</p>
+      {intro && <p class="about__intro">{intro}</p>}
       {storyParagraphs.map((segments) => (
         <p>
           {segments.map((segment) => (segment.bold ? <strong>{segment.text}</strong> : segment.text))}
         </p>
       ))}
+      <p class="about__story-link">
+        <a href="/minha-historia">{copy.about.storyLinkLabel}</a>
+      </p>
 
       {
         site.about.certifications.length > 0 && (
@@ -84,6 +87,10 @@ const storyParagraphs = parseRichText(fill(copy.about.story, tokens));
     height: auto;
   }
 
+  .about__copy h2 {
+    margin-bottom: var(--space-sm);
+  }
+
   .about__intro {
     font-size: var(--step-1);
     font-weight: var(--weight-medium);
@@ -92,6 +99,11 @@ const storyParagraphs = parseRichText(fill(copy.about.story, tokens));
 
   .about__copy p + p {
     margin-top: var(--space-sm);
+  }
+
+  .about__story-link a {
+    font-weight: var(--weight-medium);
+    color: var(--color-primary);
   }
 
   .about__certifications {
@@ -119,7 +131,7 @@ const storyParagraphs = parseRichText(fill(copy.about.story, tokens));
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: var(--color-accent-text);
   }
 
   @media (min-width: 900px) {

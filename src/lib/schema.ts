@@ -1,4 +1,5 @@
-import type { SiteConfig } from "../config/site";
+import type { Service, SiteConfig } from "../config/site";
+import copy from "../content/copy";
 import { buildOpeningHoursSpecification } from "./hours";
 
 export interface SchemaImages {
@@ -38,23 +39,51 @@ export function buildStructuredData(site: SiteConfig, images: SchemaImages) {
     addressCountry: site.address.country,
   });
 
-  const offers =
-    site.services.showPrices && site.services.items.length > 0
-      ? {
-          "@type": "OfferCatalog",
-          name: `Serviços — ${site.business.name}`,
-          itemListElement: site.services.items.map((service) => ({
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Service",
-              name: service.name,
-              description: service.description,
-            },
-            price: service.price,
-            priceCurrency: site.currency,
-          })),
-        }
-      : undefined;
+  // "a partir de" prices become a minPrice; services priced after an
+  // evaluation (no `price`) are listed without any price at all.
+  const toOffer = (service: Service) => {
+    const hasPrice = site.services.showPrices && service.price !== undefined;
+    return prune({
+      "@type": "Offer",
+      itemOffered: prune({
+        "@type": "Service",
+        name: service.name,
+        description: service.description,
+      }),
+      price: hasPrice && !service.priceFrom ? service.price : undefined,
+      priceCurrency: hasPrice && !service.priceFrom ? site.currency : undefined,
+      priceSpecification:
+        hasPrice && service.priceFrom
+          ? {
+              "@type": "PriceSpecification",
+              minPrice: service.price,
+              priceCurrency: site.currency,
+            }
+          : undefined,
+    });
+  };
+
+  const categories = site.services.categories.filter((category) => category.items.length > 0);
+  const catalogName = `${copy.services.heading} — ${site.business.name}`;
+  // One untitled category = a flat list; otherwise one sub-catalog per category.
+  const offerCatalog =
+    categories.length === 0
+      ? undefined
+      : categories.length === 1 && !categories[0].title
+        ? {
+            "@type": "OfferCatalog",
+            name: catalogName,
+            itemListElement: categories[0].items.map(toOffer),
+          }
+        : {
+            "@type": "OfferCatalog",
+            name: catalogName,
+            itemListElement: categories.map((category) => ({
+              "@type": "OfferCatalog",
+              name: category.title ?? catalogName,
+              itemListElement: category.items.map(toOffer),
+            })),
+          };
 
   const sameAs = [
     site.social.instagram,
@@ -75,19 +104,21 @@ export function buildStructuredData(site: SiteConfig, images: SchemaImages) {
     logo: images.logoUrl,
     priceRange: site.business.priceRange,
     address,
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: site.address.geo.lat,
-      longitude: site.address.geo.lng,
-    },
+    geo: site.address.geo
+      ? {
+          "@type": "GeoCoordinates",
+          latitude: site.address.geo.lat,
+          longitude: site.address.geo.lng,
+        }
+      : undefined,
     openingHoursSpecification: buildOpeningHoursSpecification(site.hours.days),
     hasMap: site.address.googleMapsUrl,
     sameAs,
     areaServed: site.address.city,
     paymentAccepted: site.paymentMethods.join(", "),
     currenciesAccepted: site.currency,
-    foundingDate: String(site.business.foundingYear),
-    makesOffer: offers,
+    foundingDate: site.business.foundingYear ? String(site.business.foundingYear) : undefined,
+    hasOfferCatalog: offerCatalog,
   });
 
   const website = {
@@ -99,11 +130,13 @@ export function buildStructuredData(site: SiteConfig, images: SchemaImages) {
     publisher: { "@id": businessId },
   };
 
+  // Same rule as the FAQ section: drafted questions with no answer stay out.
+  const faq = site.faq.filter((item) => item.answer.trim() !== "");
   const faqPage =
-    site.faq.length > 0
+    faq.length > 0
       ? {
           "@type": "FAQPage",
-          mainEntity: site.faq.map((item) => ({
+          mainEntity: faq.map((item) => ({
             "@type": "Question",
             name: item.question,
             acceptedAnswer: {

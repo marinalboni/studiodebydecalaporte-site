@@ -3,7 +3,7 @@ import site from "../../config/site";
 import copy from "../../content/copy";
 import { fill } from "../../lib/fill";
 import { buildHoursDisplay } from "../../lib/hours";
-import MapFacade from "../ui/MapFacade.astro";
+import MapEmbed from "../ui/MapEmbed.astro";
 
 const tokens = { neighborhood: site.address.neighborhood, city: site.address.city };
 const intro = fill(copy.location.intro, tokens);
@@ -56,7 +56,7 @@ const days = buildHoursDisplay(site.hours.days, copy.location.dayLabels, copy.lo
                       <Fragment>
                         {index > 0 && ", "}
                         <time datetime={block.opens}>{block.opens}</time>
-                        {"–"}
+                        {" – "}
                         <time datetime={block.closes}>{block.closes}</time>
                       </Fragment>
                     ))}
@@ -69,7 +69,7 @@ const days = buildHoursDisplay(site.hours.days, copy.location.dayLabels, copy.lo
     </div>
 
     <div class="location__map">
-      <MapFacade />
+      <MapEmbed />
     </div>
   </div>
 </section>

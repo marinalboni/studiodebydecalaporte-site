@@ -5,7 +5,11 @@ import copy from "../content/copy";
 import { fill } from "../lib/fill";
 import { parseRichText } from "../lib/richtext";
 
-const tokens = { businessName: site.business.name };
+const tokens = {
+  businessName: site.business.name,
+  ownerName: site.about.ownerName,
+  phoneDisplay: site.contact.phoneDisplay,
+};
 const title = fill(copy.pages.privacy.title, tokens);
 const description = fill(copy.pages.privacy.description, tokens);
 
@@ -25,7 +29,7 @@ const lastUpdated = new Intl.DateTimeFormat(site.locale, { dateStyle: "long" }).
       copy.pages.privacy.sections.map((section) => (
         <section>
           <h2>{section.heading}</h2>
-          {parseRichText(section.body).map((segments) => (
+          {parseRichText(fill(section.body, tokens)).map((segments) => (
             <p>
               {segments.map((segment) => (segment.bold ? <strong>{segment.text}</strong> : segment.text))}
             </p>

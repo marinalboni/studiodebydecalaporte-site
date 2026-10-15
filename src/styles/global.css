@@ -67,7 +67,7 @@ button {
 
 a {
   color: inherit;
-  text-decoration-color: var(--color-accent);
+  text-decoration-color: var(--color-accent-text);
 }
 
 h1,
@@ -110,7 +110,7 @@ table {
  * ACCESSIBILITY HELPERS
  * ------------------------------------------------------------------- */
 :focus-visible {
-  outline: 3px solid var(--color-accent);
+  outline: 3px solid var(--color-accent-text);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -179,7 +179,7 @@ html[data-floating-cta] {
 /* Shared heading pattern used at the top of every content section. */
 .section-eyebrow {
   font-weight: var(--weight-medium);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   margin-bottom: var(--space-2xs);
 }
 

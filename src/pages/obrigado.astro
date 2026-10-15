@@ -15,9 +15,13 @@ const title = fill(copy.pages.obrigado.title, { businessName: site.business.name
   robots="noindex, follow"
   includeStructuredData={false}
 >
-  <section class="container obrigado">
-    <h1>{copy.pages.obrigado.heading}</h1>
-    <p>{copy.pages.obrigado.body}</p>
+  <section
+    class="container obrigado"
+    data-ficha-heading={copy.pages.obrigado.fichaHeading}
+    data-ficha-body={copy.pages.obrigado.fichaBody}
+  >
+    <h1 class="obrigado__heading">{copy.pages.obrigado.heading}</h1>
+    <p class="obrigado__body">{copy.pages.obrigado.body}</p>
     <div class="obrigado__actions">
       <Button href="/" variant="outline">{copy.pages.obrigado.backHomeCta}</Button>
       <WhatsAppLink message={site.contact.whatsappDefaultMessage}>
@@ -26,6 +30,18 @@ const title = fill(copy.pages.obrigado.title, { businessName: site.business.name
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // The anamnese form posts to /obrigado?ficha=1. Without JS the generic
+  // thank-you text simply stays, which is still correct.
+  const section = document.querySelector<HTMLElement>(".obrigado");
+  if (section && new URLSearchParams(window.location.search).has("ficha")) {
+    const heading = section.querySelector(".obrigado__heading");
+    const body = section.querySelector(".obrigado__body");
+    if (heading && section.dataset.fichaHeading) heading.textContent = section.dataset.fichaHeading;
+    if (body && section.dataset.fichaBody) body.textContent = section.dataset.fichaBody;
+  }
+</script>
 
 <style>
   .obrigado {

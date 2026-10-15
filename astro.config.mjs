@@ -12,7 +12,15 @@ export default defineConfig({
   trailingSlash: "never",
   integrations: [
     sitemap({
-      filter: (page) => !page.includes("/obrigado"),
+      filter: (page) => !page.includes("/obrigado") && !page.includes("/ficha-de-anamnese"),
     }),
   ],
+  vite: {
+    build: {
+      // Astro inlines small <script>s into the HTML by default, but the CSP
+      // in netlify.toml only allows script-src 'self' — so every script must
+      // ship as an external /_astro/*.js file.
+      assetsInlineLimit: 0,
+    },
+  },
 });

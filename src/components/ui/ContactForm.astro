@@ -1,6 +1,7 @@
 ---
 import site from "../../config/site";
 import copy from "../../content/copy";
+import Button from "./Button.astro";
 
 const { form } = copy.contact;
 const isFormspree = site.form.provider === "formspree";
@@ -50,7 +51,9 @@ const honeypotName = isFormspree ? "_gotcha" : "bot-field";
       id="contact-phone"
       name="telefone"
       type="tel"
-      inputmode="tel"
+      inputmode="numeric"
+      pattern="[0-9]{9,}"
+      minlength="9"
       autocomplete="tel"
       placeholder={form.phonePlaceholder}
       required
@@ -81,7 +84,14 @@ const honeypotName = isFormspree ? "_gotcha" : "bot-field";
     <label for="contact-service">{form.serviceLabel}</label>
     <select id="contact-service" name="servico">
       <option value="">{form.servicePlaceholder}</option>
-      {site.services.items.map((service) => <option value={service.name}>{service.name}</option>)}
+      {
+        site.services.categories.map((category) => {
+          const options = category.items.map((service) => (
+            <option value={service.name}>{service.name}</option>
+          ));
+          return category.title ? <optgroup label={category.title}>{options}</optgroup> : options;
+        })
+      }
       <option value={form.serviceOtherOption}>{form.serviceOtherOption}</option>
     </select>
   </div>
@@ -113,15 +123,13 @@ const honeypotName = isFormspree ? "_gotcha" : "bot-field";
     <span id="contact-consent-error" class="contact-form__error" role="alert"></span>
   </div>
 
-  <button type="submit" class="button button--primary contact-form__submit">
-    {form.submitLabel}
-  </button>
+  <Button type="submit" class="contact-form__submit">{form.submitLabel}</Button>
 </form>
 
 <script>
   document.querySelectorAll<HTMLFormElement>(".contact-form").forEach((formEl) => {
     const controls = formEl.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-      "input[required], textarea[required]",
+      "input[required], textarea[required], input[type='email']",
     );
 
     controls.forEach((control) => {
@@ -132,7 +140,16 @@ const honeypotName = isFormspree ? "_gotcha" : "bot-field";
         control.setAttribute("aria-invalid", "true");
       });
 
+      // Validate as soon as the visitor leaves the field, not only on submit.
+      // checkValidity() fires the "invalid" handler above when needed. The
+      // consent checkbox is skipped so tabbing past it doesn't flag it.
+      if (control.type !== "checkbox") {
+        control.addEventListener("blur", () => control.checkValidity());
+      }
+
       control.addEventListener("input", () => {
+        // Phone accepts digits only: drop anything else as it's typed or pasted.
+        if (control.type === "tel") control.value = control.value.replace(/\D/g, "");
         if (control.validity.valid) {
           const errorEl = document.getElementById(`${control.id}-error`);
           if (errorEl) errorEl.textContent = "";
@@ -193,11 +210,11 @@ const honeypotName = isFormspree ? "_gotcha" : "bot-field";
 
   .contact-form__field input:invalid[aria-invalid="true"],
   .contact-form__field textarea:invalid[aria-invalid="true"] {
-    border-color: var(--color-accent);
+    border-color: var(--color-accent-text);
   }
 
   .contact-form__error {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     font-size: var(--step--1);
     min-height: 1.2em;
   }
@@ -220,7 +237,7 @@ const honeypotName = isFormspree ? "_gotcha" : "bot-field";
     grid-column: 1 / -1;
   }
 
-  .contact-form__submit {
+  .contact-form :global(.contact-form__submit) {
     align-self: flex-start;
   }
 </style>

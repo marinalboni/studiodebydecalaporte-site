@@ -1,0 +1,39 @@
+---
+// Client-specific page — not part of the reusable template. Shared with
+// clients by link before the first hair-therapy session; never indexed,
+// excluded from the sitemap (astro.config.mjs), absent from the main nav.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import site from "../config/site";
+import copy from "../content/copy";
+import { fill } from "../lib/fill";
+import AnamneseForm from "../components/ui/AnamneseForm.astro";
+
+const text = copy.pages.anamnese;
+const tokens = { businessName: site.business.name, shortName: site.business.shortName };
+---
+
+<BaseLayout
+  title={fill(text.title, tokens)}
+  description={fill(text.description, tokens)}
+  robots="noindex, nofollow"
+  includeStructuredData={false}
+>
+  <div class="container anamnese">
+    <h1>{text.heading}</h1>
+    <p class="anamnese__intro">{text.intro}</p>
+    <AnamneseForm />
+  </div>
+</BaseLayout>
+
+<style>
+  .anamnese {
+    padding-block: var(--space-2xl);
+    max-width: var(--container-width-sm);
+  }
+
+  .anamnese__intro {
+    margin-block: var(--space-sm) var(--space-lg);
+    color: var(--color-text-muted);
+    max-width: 65ch;
+  }
+</style>

@@ -1,7 +1,6 @@
 ---
 import site from "../../config/site";
 import copy from "../../content/copy";
-import WhatsAppLink from "../ui/WhatsAppLink.astro";
 import ContactForm from "../ui/ContactForm.astro";
 ---
 
@@ -14,19 +13,17 @@ import ContactForm from "../ui/ContactForm.astro";
 
       <ul class="contact__details">
         <li>
-          <span class="contact__label">{copy.contact.whatsappLabel}</span>
-          <WhatsAppLink message={site.contact.whatsappDefaultMessage}>
-            {site.contact.phoneDisplay}
-          </WhatsAppLink>
-        </li>
-        <li>
           <span class="contact__label">{copy.contact.phoneLabel}</span>
           <a href={`tel:${site.contact.phoneE164}`}>{site.contact.phoneDisplay}</a>
         </li>
-        <li>
-          <span class="contact__label">{copy.contact.emailLabel}</span>
-          <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
-        </li>
+        {
+          site.contact.email && (
+            <li>
+              <span class="contact__label">{copy.contact.emailLabel}</span>
+              <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+            </li>
+          )
+        }
       </ul>
     </div>
 
