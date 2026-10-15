@@ -1,0 +1,130 @@
+---
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import site from "../../config/site";
+import copy from "../../content/copy";
+import { fill } from "../../lib/fill";
+import { resolveImage } from "../../lib/images";
+import { parseRichText } from "../../lib/richtext";
+
+const aboutImages = import.meta.glob<{ default: ImageMetadata }>(
+  "../../assets/images/about/*.{jpg,jpeg,png}",
+  { eager: true },
+);
+const aboutImage = resolveImage(aboutImages, site.images.about.file);
+
+const tokens = {
+  ownerName: site.about.ownerName,
+  yearsExperience: site.about.yearsExperience,
+};
+const intro = fill(copy.about.intro, tokens);
+const storyParagraphs = parseRichText(fill(copy.about.story, tokens));
+---
+
+<section id="about" aria-labelledby="about-heading" class="about">
+  <div class="container about__grid">
+    {
+      aboutImage && (
+        <div class="about__media">
+          <Picture
+            src={aboutImage}
+            alt={site.images.about.alt}
+            widths={[400, 700, 1000]}
+            sizes="(min-width: 900px) 35vw, 100vw"
+            formats={["avif", "webp", "jpeg"]}
+            loading="lazy"
+            width={aboutImage.width}
+            height={aboutImage.height}
+          />
+        </div>
+      )
+    }
+
+    <div class="about__copy">
+      <p class="section-eyebrow">{copy.about.eyebrow}</p>
+      <h2 id="about-heading">{copy.about.heading}</h2>
+      <p class="about__intro">{intro}</p>
+      {storyParagraphs.map((segments) => (
+        <p>
+          {segments.map((segment) => (segment.bold ? <strong>{segment.text}</strong> : segment.text))}
+        </p>
+      ))}
+
+      {
+        site.about.certifications.length > 0 && (
+          <div class="about__certifications">
+            <h3>{copy.about.certificationsHeading}</h3>
+            <ul>
+              {site.about.certifications.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    padding-block: var(--space-2xl);
+  }
+
+  .about__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .about__media :global(img) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    height: auto;
+  }
+
+  .about__intro {
+    font-size: var(--step-1);
+    font-weight: var(--weight-medium);
+    margin-bottom: var(--space-sm);
+  }
+
+  .about__copy p + p {
+    margin-top: var(--space-sm);
+  }
+
+  .about__certifications {
+    margin-top: var(--space-lg);
+  }
+
+  .about__certifications ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    margin-top: var(--space-xs);
+  }
+
+  .about__certifications li {
+    padding-left: var(--space-sm);
+    position: relative;
+    color: var(--color-text-muted);
+  }
+
+  .about__certifications li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  @media (min-width: 900px) {
+    .about__grid {
+      grid-template-columns: 2fr 3fr;
+    }
+  }
+</style>

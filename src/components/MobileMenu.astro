@@ -1,0 +1,166 @@
+---
+import copy from "../content/copy";
+
+interface Props {
+  navItems: { href: string; label: string }[];
+}
+
+const { navItems } = Astro.props;
+---
+
+<button
+  type="button"
+  class="menu-toggle"
+  id="menu-toggle"
+  aria-expanded="false"
+  aria-controls="primary-nav"
+  data-close-label={copy.header.menuCloseLabel}
+>
+  <span class="sr-only">{copy.header.menuOpenLabel}</span>
+  <span class="menu-toggle__icon" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </span>
+</button>
+
+<nav id="primary-nav" class="primary-nav" aria-label={copy.header.navPrimaryLabel} data-state="closed">
+  <ul class="primary-nav__list">
+    {
+      navItems.map((item) => (
+        <li>
+          <a href={item.href} class="primary-nav__link">
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  const toggle = document.getElementById("menu-toggle");
+  const nav = document.getElementById("primary-nav");
+  if (toggle && nav) {
+    const openLabel = toggle.querySelector(".sr-only")?.textContent ?? "";
+    const closeLabel = toggle.dataset.closeLabel ?? openLabel;
+
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      nav.dataset.state = open ? "open" : "closed";
+      const label = toggle.querySelector(".sr-only");
+      if (label) label.textContent = open ? closeLabel : openLabel;
+    };
+
+    toggle.addEventListener("click", () => {
+      setOpen(nav.dataset.state !== "open");
+    });
+
+    nav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => setOpen(false));
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && nav.dataset.state === "open") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (
+        nav.dataset.state === "open" &&
+        !nav.contains(event.target as Node) &&
+        !toggle.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    });
+  }
+</script>
+
+<style>
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+  }
+
+  .menu-toggle__icon {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .menu-toggle__icon span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-text);
+    border-radius: var(--radius-full);
+  }
+
+  .primary-nav {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(85vw, 20rem);
+    height: 100vh;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-xl) var(--space-md) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    transform: translateX(100%);
+    transition: transform var(--transition-normal) var(--ease-standard);
+    overflow-y: auto;
+  }
+
+  .primary-nav[data-state="open"] {
+    transform: translateX(0);
+  }
+
+  .primary-nav__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .primary-nav__link {
+    font-family: var(--font-heading);
+    font-size: var(--step-1);
+    text-decoration: none;
+  }
+
+  @media (min-width: 900px) {
+    .menu-toggle {
+      display: none;
+    }
+
+    .primary-nav {
+      position: static;
+      width: auto;
+      height: auto;
+      box-shadow: none;
+      background: transparent;
+      padding: 0;
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-lg);
+      transform: none;
+      overflow: visible;
+    }
+
+    .primary-nav__list {
+      flex-direction: row;
+      gap: var(--space-md);
+    }
+
+    .primary-nav__link {
+      font-family: var(--font-body);
+      font-size: var(--step-0);
+      font-weight: var(--weight-medium);
+    }
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import site from "../../config/site";
+import copy from "../../content/copy";
+import { fill } from "../../lib/fill";
+import WhatsAppLink from "../ui/WhatsAppLink.astro";
+
+const { items, showPrices } = site.services;
+const currencyFormatter = new Intl.NumberFormat(site.locale, {
+  style: "currency",
+  currency: site.currency,
+});
+---
+
+<section id="services" aria-labelledby="services-heading" class="services">
+  <div class="container">
+    <p class="section-eyebrow">{copy.services.eyebrow}</p>
+    <h2 id="services-heading">{copy.services.heading}</h2>
+    <p class="section-intro">{copy.services.intro}</p>
+
+    <ul class="services__grid">
+      {
+        items.map((service) => {
+          const message = fill(copy.services.whatsappMessageTemplate, {
+            service: service.name,
+          });
+          return (
+            <li class="service-card">
+              <h3>{service.name}</h3>
+              {service.description && <p class="service-card__description">{service.description}</p>}
+              <div class="service-card__meta">
+                {showPrices && service.price !== undefined && (
+                  <span class="service-card__price">
+                    {service.priceFrom ? `${copy.services.priceFromPrefix} ` : ""}
+                    {currencyFormatter.format(service.price)}
+                  </span>
+                )}
+                {service.duration && (
+                  <span class="service-card__duration">
+                    {copy.services.durationLabel}: {service.duration}
+                  </span>
+                )}
+              </div>
+              <WhatsAppLink message={message} variant="outline">
+                {copy.services.ctaLabel}
+              </WhatsAppLink>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services {
+    padding-block: var(--space-2xl);
+  }
+
+  .services__grid {
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    margin-top: var(--space-md);
+  }
+
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .service-card__description {
+    color: var(--color-text-muted);
+    font-size: var(--step--1);
+  }
+
+  .service-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    font-size: var(--step--1);
+    font-weight: var(--weight-medium);
+  }
+
+  .service-card__price {
+    color: var(--color-primary);
+  }
+
+  .service-card :global(.button) {
+    align-self: flex-start;
+    margin-top: var(--space-2xs);
+  }
+</style>

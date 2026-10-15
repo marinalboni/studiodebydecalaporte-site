@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import site from "../config/site";
+import copy from "../content/copy";
+import { fill } from "../lib/fill";
+import { parseRichText } from "../lib/richtext";
+
+const tokens = { businessName: site.business.name };
+const title = fill(copy.pages.privacy.title, tokens);
+const description = fill(copy.pages.privacy.description, tokens);
+
+// TODO: set a real "last updated" date whenever this policy's content changes.
+const lastUpdated = new Intl.DateTimeFormat(site.locale, { dateStyle: "long" }).format(new Date());
+---
+
+<BaseLayout title={title} description={description} includeStructuredData={false}>
+  <article class="container privacy">
+    <h1>{copy.pages.privacy.heading}</h1>
+    <p class="privacy__updated">
+      {copy.pages.privacy.updatedLabel}: <time datetime={new Date().toISOString().slice(0, 10)}>{lastUpdated}</time>
+    </p>
+    <p class="privacy__intro">{copy.pages.privacy.intro}</p>
+
+    {
+      copy.pages.privacy.sections.map((section) => (
+        <section>
+          <h2>{section.heading}</h2>
+          {parseRichText(section.body).map((segments) => (
+            <p>
+              {segments.map((segment) => (segment.bold ? <strong>{segment.text}</strong> : segment.text))}
+            </p>
+          ))}
+        </section>
+      ))
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .privacy {
+    padding-block: var(--space-2xl);
+    max-width: var(--container-width-sm);
+  }
+
+  .privacy__updated {
+    color: var(--color-text-muted);
+    font-size: var(--step--1);
+    margin-bottom: var(--space-md);
+  }
+
+  .privacy__intro {
+    margin-bottom: var(--space-lg);
+  }
+
+  .privacy section {
+    margin-top: var(--space-lg);
+  }
+
+  .privacy section p {
+    margin-top: var(--space-2xs);
+    color: var(--color-text-muted);
+  }
+</style>

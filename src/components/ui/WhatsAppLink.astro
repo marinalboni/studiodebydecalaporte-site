@@ -1,0 +1,19 @@
+---
+import { buildWhatsAppUrl } from "../../lib/whatsapp";
+import site from "../../config/site";
+import Button from "./Button.astro";
+
+interface Props {
+  message: string;
+  variant?: "primary" | "secondary" | "outline";
+  ariaLabel?: string;
+  class?: string;
+}
+
+const { message, variant = "primary", ariaLabel, class: className } = Astro.props;
+const href = buildWhatsAppUrl(site.contact.whatsappNumber, message);
+---
+
+<Button href={href} external variant={variant} ariaLabel={ariaLabel} class={className}>
+  <slot />
+</Button>

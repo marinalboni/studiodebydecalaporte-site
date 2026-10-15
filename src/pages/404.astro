@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import site from "../config/site";
+import copy from "../content/copy";
+import { fill } from "../lib/fill";
+import Button from "../components/ui/Button.astro";
+
+const title = fill(copy.pages.notFound.title, { businessName: site.business.name });
+---
+
+<BaseLayout
+  title={title}
+  description={copy.pages.notFound.description}
+  robots="noindex, follow"
+  includeStructuredData={false}
+>
+  <section class="container not-found">
+    <h1>{copy.pages.notFound.heading}</h1>
+    <p>{copy.pages.notFound.body}</p>
+    <Button href="/" variant="outline">{copy.pages.notFound.backHomeCta}</Button>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-block: var(--space-3xl);
+    max-width: var(--container-width-sm);
+    text-align: center;
+  }
+
+  .not-found p {
+    margin-block: var(--space-md) var(--space-lg);
+    color: var(--color-text-muted);
+  }
+</style>

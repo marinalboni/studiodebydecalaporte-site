@@ -1,0 +1,102 @@
+---
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import site from "../../config/site";
+import copy from "../../content/copy";
+import { fill } from "../../lib/fill";
+import { resolveImage } from "../../lib/images";
+import WhatsAppLink from "../ui/WhatsAppLink.astro";
+import Button from "../ui/Button.astro";
+
+const heroImages = import.meta.glob<{ default: ImageMetadata }>(
+  "../../assets/images/hero/*.{jpg,jpeg,png}",
+  { eager: true },
+);
+const heroImage = resolveImage(heroImages, site.images.hero.file);
+
+const tokens = {
+  businessName: site.business.name,
+  neighborhood: site.address.neighborhood,
+  city: site.address.city,
+};
+const heading = fill(copy.hero.heading, tokens);
+const eyebrow = fill(copy.hero.eyebrow, tokens);
+---
+
+<section id="hero" aria-labelledby="hero-heading" class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="hero__eyebrow">{eyebrow}</p>
+      <h1 id="hero-heading">{heading}</h1>
+      <p class="hero__intro">{copy.hero.intro}</p>
+      <div class="hero__actions">
+        <WhatsAppLink message={site.contact.whatsappDefaultMessage}>
+          {copy.hero.ctaPrimary}
+        </WhatsAppLink>
+        <Button href="#services" variant="outline">{copy.hero.ctaSecondary}</Button>
+      </div>
+    </div>
+
+    {
+      heroImage && (
+        <div class="hero__media">
+          <Picture
+            src={heroImage}
+            alt={site.images.hero.alt}
+            widths={[480, 768, 1200, 1600]}
+            sizes="(min-width: 900px) 50vw, 100vw"
+            formats={["avif", "webp", "jpeg"]}
+            loading="eager"
+            fetchpriority="high"
+            width={heroImage.width}
+            height={heroImage.height}
+          />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .hero__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .hero__eyebrow {
+    font-weight: var(--weight-medium);
+    color: var(--color-accent);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .hero__intro {
+    margin-block: var(--space-sm) var(--space-lg);
+    max-width: 48ch;
+    color: var(--color-text-muted);
+    font-size: var(--step-1);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .hero__media :global(img) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    height: auto;
+  }
+
+  @media (min-width: 900px) {
+    .hero__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

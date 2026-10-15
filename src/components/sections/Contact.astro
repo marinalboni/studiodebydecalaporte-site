@@ -1,0 +1,72 @@
+---
+import site from "../../config/site";
+import copy from "../../content/copy";
+import WhatsAppLink from "../ui/WhatsAppLink.astro";
+import ContactForm from "../ui/ContactForm.astro";
+---
+
+<section id="contact" aria-labelledby="contact-heading" class="contact">
+  <div class="container contact__grid">
+    <div class="contact__info">
+      <p class="section-eyebrow">{copy.contact.eyebrow}</p>
+      <h2 id="contact-heading">{copy.contact.heading}</h2>
+      <p class="section-intro">{copy.contact.intro}</p>
+
+      <ul class="contact__details">
+        <li>
+          <span class="contact__label">{copy.contact.whatsappLabel}</span>
+          <WhatsAppLink message={site.contact.whatsappDefaultMessage}>
+            {site.contact.phoneDisplay}
+          </WhatsAppLink>
+        </li>
+        <li>
+          <span class="contact__label">{copy.contact.phoneLabel}</span>
+          <a href={`tel:${site.contact.phoneE164}`}>{site.contact.phoneDisplay}</a>
+        </li>
+        <li>
+          <span class="contact__label">{copy.contact.emailLabel}</span>
+          <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="contact__form">
+      <ContactForm />
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-block: var(--space-2xl);
+  }
+
+  .contact__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .contact__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+
+  .contact__label {
+    display: block;
+    font-size: var(--step--1);
+    color: var(--color-text-muted);
+  }
+
+  .contact__details a {
+    font-weight: var(--weight-medium);
+  }
+
+  @media (min-width: 900px) {
+    .contact__grid {
+      grid-template-columns: 1fr 1.2fr;
+    }
+  }
+</style>

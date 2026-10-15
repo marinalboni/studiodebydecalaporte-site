@@ -1,0 +1,53 @@
+---
+import type { SectionId } from "../config/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import site from "../config/site";
+import copy from "../content/copy";
+import { fill } from "../lib/fill";
+import Hero from "../components/sections/Hero.astro";
+import Services from "../components/sections/Services.astro";
+import Gallery from "../components/sections/Gallery.astro";
+import About from "../components/sections/About.astro";
+import Testimonials from "../components/sections/Testimonials.astro";
+import Location from "../components/sections/Location.astro";
+import FAQ from "../components/sections/FAQ.astro";
+import Contact from "../components/sections/Contact.astro";
+
+const tokens = {
+  businessName: site.business.name,
+  neighborhood: site.address.neighborhood,
+  city: site.address.city,
+};
+
+const title = fill(copy.pages.home.title, tokens);
+const description = fill(copy.pages.home.description, tokens);
+const ogImageAlt = fill(copy.pages.home.ogImageAlt, tokens);
+
+// Section order and visibility are entirely config-driven: reordering or
+// hiding a section for a new client is a one-line change in site.ts.
+const SECTION_COMPONENTS: Record<SectionId, any> = {
+  hero: Hero,
+  services: Services,
+  gallery: Gallery,
+  about: About,
+  testimonials: Testimonials,
+  location: Location,
+  faq: FAQ,
+  contact: Contact,
+};
+
+const activeSections = site.sections.filter((section) => {
+  if (!section.enabled) return false;
+  if (section.id === "testimonials" && site.testimonials.length === 0) return false;
+  return true;
+});
+---
+
+<BaseLayout title={title} description={description} ogImageAlt={ogImageAlt}>
+  {
+    activeSections.map((section) => {
+      const Component = SECTION_COMPONENTS[section.id];
+      return <Component />;
+    })
+  }
+</BaseLayout>

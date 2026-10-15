@@ -1,0 +1,161 @@
+---
+import type { SectionId } from "../config/site";
+import site from "../config/site";
+import copy from "../content/copy";
+import { buildHoursDisplay } from "../lib/hours";
+import { fill } from "../lib/fill";
+
+const days = buildHoursDisplay(site.hours.days, copy.location.dayLabels, copy.location.closedLabel);
+
+const NAV_LABELS: Partial<Record<SectionId, string>> = {
+  services: copy.header.navServices,
+  gallery: copy.header.navGallery,
+  about: copy.header.navAbout,
+  testimonials: copy.header.navTestimonials,
+  location: copy.header.navLocation,
+  faq: copy.header.navFaq,
+  contact: copy.header.navContact,
+};
+
+const navItems = site.sections
+  .filter((section) => section.enabled && NAV_LABELS[section.id])
+  .map((section) => ({ href: `#${section.id}`, label: NAV_LABELS[section.id]! }));
+
+const socialLinks = [
+  { href: site.social.instagram, label: "Instagram" },
+  { href: site.social.facebook, label: "Facebook" },
+  { href: site.social.tiktok, label: "TikTok" },
+].filter((link): link is { href: string; label: string } => Boolean(link.href));
+
+const year = new Date().getFullYear();
+const copyrightText = fill(copy.footer.copyrightTemplate, {
+  year,
+  businessName: site.business.name,
+});
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__nap">
+      <p class="site-footer__business-name">{site.business.name}</p>
+      <address class="site-footer__address">
+        {site.address.showFullAddress ? (
+          <span>
+            {site.address.street}, {site.address.number}
+            {site.address.complement ? `, ${site.address.complement}` : ""}
+            <br />
+          </span>
+        ) : null}
+        {site.address.neighborhood}, {site.address.city} - {site.address.state}
+        <br />
+        <a href={`tel:${site.contact.phoneE164}`}>{site.contact.phoneDisplay}</a>
+      </address>
+    </div>
+
+    <div class="site-footer__hours">
+      <h2 class="site-footer__heading">{copy.footer.hoursHeading}</h2>
+      <dl class="site-footer__hours-list">
+        {
+          days.map((day) => (
+            <div class="site-footer__hours-row">
+              <dt>{day.label}</dt>
+              <dd>{day.hoursText}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <nav class="site-footer__nav" aria-label={copy.footer.navHeading}>
+      <h2 class="site-footer__heading">{copy.footer.navHeading}</h2>
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+        <li><a href="/politica-de-privacidade">{copy.footer.privacyLinkText}</a></li>
+      </ul>
+    </nav>
+
+    {socialLinks.length > 0 && (
+      <div class="site-footer__social">
+        <h2 class="site-footer__heading">{copy.footer.socialHeading}</h2>
+        <ul>
+          {socialLinks.map((link) => (
+            <li>
+              <a href={link.href} rel="noopener noreferrer" target="_blank">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p>{copyrightText}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-2xl);
+  }
+
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-lg);
+    padding-block: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+
+  .site-footer__business-name {
+    font-family: var(--font-heading);
+    font-weight: var(--weight-semibold);
+    font-size: var(--step-1);
+    margin-bottom: var(--space-xs);
+  }
+
+  .site-footer__address {
+    font-style: normal;
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+  }
+
+  .site-footer__heading {
+    font-size: var(--step-0);
+    margin-bottom: var(--space-sm);
+  }
+
+  .site-footer__hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    font-size: var(--step--1);
+    padding-block: var(--space-3xs);
+  }
+
+  .site-footer__hours-row dt,
+  .site-footer__hours-row dd {
+    margin: 0;
+  }
+
+  .site-footer__nav ul,
+  .site-footer__social ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  /* Extra bottom padding equal to the floating WhatsApp button's footprint
+     (0 when it's disabled) so the copyright line is never stuck under it. */
+  .site-footer__bottom {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-sm);
+    padding-bottom: calc(var(--space-sm) + var(--floating-cta-clearance, 0px));
+    font-size: var(--step--1);
+    color: var(--color-text-muted);
+  }
+</style>

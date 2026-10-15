@@ -1,0 +1,107 @@
+/**
+ * DESIGN TOKENS — the theme for this client.
+ *
+ * This is one of the four places to edit for a new client (along with
+ * src/config/site.ts, src/content/copy.ts and the images in src/assets/).
+ * Components must never contain a raw hex value, font name, or magic spacing
+ * number — only var(--token) references to what's defined here.
+ *
+ * --color-primary and --color-bg are also read at build time by
+ * src/lib/theme.ts for <meta name="theme-color"> and site.webmanifest, so
+ * keep them as plain declarations inside :root (the build fails if either
+ * is missing).
+ *
+ * TODO: every color below is a placeholder. Replace with the client's real
+ * brand palette before launch.
+ */
+
+:root {
+  /* ---------------------------------------------------------------------
+   * COLOR — exactly 3 brand colors, each with a "-contrast" text color that
+   * is readable on top of it (check contrast after changing either side).
+   * --color-accent is reserved for primary CTAs (the WhatsApp buttons etc.).
+   * ------------------------------------------------------------------- */
+  --color-primary: #7a4b3a; /* TODO: replace — placeholder warm terracotta */
+  --color-primary-contrast: #fff8f5;
+
+  --color-secondary: #e8c7b8; /* TODO: replace — placeholder soft blush */
+  --color-secondary-contrast: #3a241d;
+
+  --color-accent: #c9184a; /* TODO: replace — placeholder rose, used for CTAs */
+  --color-accent-contrast: #ffffff;
+
+  /* Neutrals */
+  --color-bg: #fffaf7;
+  --color-surface: #ffffff;
+  --color-text: #2a1f1b;
+  --color-text-muted: #6b5c55;
+  --color-border: #e8ddd6;
+
+  /* ---------------------------------------------------------------------
+   * TYPOGRAPHY
+   * ------------------------------------------------------------------- */
+  --font-heading: "Outfit", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.6;
+
+  /* Fluid type scale: min viewport 360px, max viewport 1280px */
+  --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.2rem, 1.14rem + 0.3vw, 1.375rem);
+  --step-2: clamp(1.44rem, 1.34rem + 0.5vw, 1.75rem);
+  --step-3: clamp(1.73rem, 1.56rem + 0.8vw, 2.25rem);
+  --step-4: clamp(2.07rem, 1.82rem + 1.3vw, 2.9rem);
+  --step-5: clamp(2.49rem, 2.1rem + 2vw, 3.75rem);
+
+  /* ---------------------------------------------------------------------
+   * SPACING, SHAPE, MOTION
+   * ------------------------------------------------------------------- */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 8rem;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(42, 31, 27, 0.06), 0 1px 3px rgba(42, 31, 27, 0.08);
+  --shadow-md: 0 4px 10px rgba(42, 31, 27, 0.08), 0 2px 4px rgba(42, 31, 27, 0.06);
+  --shadow-lg: 0 12px 28px rgba(42, 31, 27, 0.12), 0 4px 10px rgba(42, 31, 27, 0.08);
+
+  --container-width-sm: 40rem;
+  --container-width-md: 60rem;
+  --container-width-lg: 75rem;
+
+  /* Floating WhatsApp button (FloatingWhatsApp.astro) */
+  --floating-cta-size: 3.5rem; /* 56px — mobile */
+  --floating-cta-size-lg: 3.75rem; /* 60px — desktop */
+  --floating-cta-inset: var(--space-sm); /* min distance from the viewport edge */
+
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 400ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0.01ms;
+    --transition-normal: 0.01ms;
+    --transition-slow: 0.01ms;
+  }
+}

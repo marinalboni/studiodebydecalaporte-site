@@ -1,0 +1,131 @@
+---
+import type { FloatingWhatsAppConfig } from "../config/site";
+import site from "../config/site";
+import copy from "../content/copy";
+import { buildWhatsAppUrl } from "../lib/whatsapp";
+
+interface Props {
+  position: FloatingWhatsAppConfig["position"];
+}
+
+const { position } = Astro.props;
+const href = buildWhatsAppUrl(site.contact.whatsappNumber, site.contact.whatsappDefaultMessage);
+---
+
+<a
+  class:list={["floating-whatsapp", `floating-whatsapp--${position}`]}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <svg aria-hidden="true" viewBox="0 0 32 32" class="floating-whatsapp__icon">
+    <path
+      fill="currentColor"
+      d="M16 3C9.4 3 4 8.4 4 15c0 2.3.6 4.4 1.7 6.3L4 29l7.9-1.6c1.8.9 3.9 1.4 6.1 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.6.9 1-4.5-.3-.4C5.2 17.6 4.6 16.3 4.6 15 4.6 9 9.8 4 16 4s11.4 5 11.4 11-5.2 9.8-11.4 9.8zm6-7.4c-.3-.2-2-1-2.3-1.1-.3-.1-.5-.2-.8.2-.2.3-.9 1.1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-2-1.8-2.3-.2-.3 0-.5.1-.6.1-.1.3-.4.5-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.2-.8-1.9-1.1-2.6-.3-.7-.6-.6-.8-.6h-.7c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.2 3.3 5.3 4.6.7.3 1.3.5 1.8.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"
+    ></path>
+  </svg>
+  <span class="floating-whatsapp__label">{copy.floatingWhatsapp.label}</span>
+</a>
+
+<style>
+  /* Sizes and the safe-area-aware offset come from tokens.css / global.css
+     (--floating-cta-*), which also reserve matching space under the footer. */
+  .floating-whatsapp {
+    position: fixed;
+    bottom: max(var(--floating-cta-inset), env(safe-area-inset-bottom));
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    width: var(--floating-cta-size);
+    height: var(--floating-cta-size);
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    box-shadow: var(--shadow-lg);
+    text-decoration: none;
+    font-weight: var(--weight-medium);
+    transition: transform var(--transition-fast) var(--ease-standard);
+  }
+
+  .floating-whatsapp--right {
+    right: max(var(--floating-cta-inset), env(safe-area-inset-right));
+  }
+
+  .floating-whatsapp--left {
+    left: max(var(--floating-cta-inset), env(safe-area-inset-left));
+  }
+
+  .floating-whatsapp:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Two-tone ring (page background + text color) so focus is visible over
+     any section color, including the accent-colored buttons underneath. */
+  .floating-whatsapp:focus-visible {
+    outline: 3px solid var(--color-text);
+    outline-offset: 3px;
+    box-shadow:
+      0 0 0 3px var(--color-bg),
+      var(--shadow-lg);
+  }
+
+  .floating-whatsapp__icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Mobile: icon only — the label stays in the accessibility tree (same
+     technique as .sr-only) so the link's name is identical at every size. */
+  .floating-whatsapp__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  /* Don't sit on top of the open mobile menu drawer. */
+  @media (max-width: 899px) {
+    :global(html:has(#primary-nav[data-state="open"])) .floating-whatsapp {
+      visibility: hidden;
+    }
+  }
+
+  /* Desktop: pill with a visible label. */
+  @media (min-width: 900px) {
+    .floating-whatsapp {
+      width: auto;
+      padding-inline: var(--space-sm) var(--space-md);
+    }
+
+    .floating-whatsapp__icon {
+      width: 30px;
+      height: 30px;
+    }
+
+    .floating-whatsapp__label {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .floating-whatsapp {
+      animation: floating-whatsapp-in var(--transition-slow) var(--ease-standard) 300ms both;
+    }
+  }
+
+  @keyframes floating-whatsapp-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-sm)) scale(0.9);
+    }
+  }
+</style>

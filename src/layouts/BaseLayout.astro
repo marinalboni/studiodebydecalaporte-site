@@ -1,0 +1,59 @@
+---
+import type { ImageMetadata } from "astro";
+import site from "../config/site";
+import copy from "../content/copy";
+import SEO from "../components/SEO.astro";
+import StructuredData from "../components/StructuredData.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import FloatingWhatsApp from "../components/FloatingWhatsApp.astro";
+import "../styles/global.css";
+import { fontPreloads } from "../styles/fonts";
+
+interface Props {
+  title: string;
+  description: string;
+  robots?: string;
+  ogImage?: ImageMetadata;
+  ogImageAlt?: string;
+  path?: string;
+  includeStructuredData?: boolean;
+}
+
+const {
+  title,
+  description,
+  robots,
+  ogImage,
+  ogImageAlt,
+  path,
+  includeStructuredData = true,
+} = Astro.props;
+
+const floatingCta = site.ui.floatingWhatsApp;
+---
+
+<!doctype html>
+<html lang={site.locale} data-floating-cta={floatingCta.enabled ? floatingCta.position : undefined}>
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      robots={robots}
+      ogImage={ogImage}
+      ogImageAlt={ogImageAlt}
+      path={path}
+    />
+    {fontPreloads.map((href) => <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />)}
+    {includeStructuredData && <StructuredData />}
+  </head>
+  <body>
+    <a href="#main" class="skip-link">{copy.meta.skipToContent}</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    {floatingCta.enabled && <FloatingWhatsApp position={floatingCta.position} />}
+  </body>
+</html>

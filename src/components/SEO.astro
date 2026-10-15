@@ -1,0 +1,72 @@
+---
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import site from "../config/site";
+import ogDefaultImage from "../assets/brand/og-default.jpg";
+import { themeColor } from "../lib/theme";
+
+interface Props {
+  title: string;
+  description: string;
+  /** e.g. "noindex, follow" for /obrigado and 404. Defaults to indexable. */
+  robots?: string;
+  /** Overrides the default OG image for this page. */
+  ogImage?: ImageMetadata;
+  ogImageAlt?: string;
+  /** Overrides the canonical/OG path. Defaults to the current URL's pathname. */
+  path?: string;
+}
+
+const {
+  title,
+  description,
+  robots: pageRobots = "index, follow",
+  ogImage,
+  ogImageAlt,
+  path,
+} = Astro.props;
+
+// Until site.launched is true, nothing is indexable — regardless of what the page asks for.
+const robots = site.launched ? pageRobots : "noindex, nofollow";
+
+const canonicalPath = path ?? Astro.url.pathname;
+const canonicalUrl = new URL(canonicalPath, site.siteUrl).toString().replace(/\/+$/, "") || site.siteUrl;
+
+const optimizedOgImage = await getImage({
+  src: ogImage ?? ogDefaultImage,
+  width: 1200,
+  height: 630,
+  format: "jpg",
+});
+const ogImageUrl = new URL(optimizedOgImage.src, site.siteUrl).toString();
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+<meta name="robots" content={robots} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.business.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={ogImageAlt ?? title} />
+<meta property="og:locale" content={site.ogLocale} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
+
+<meta name="theme-color" content={themeColor} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />

@@ -1,0 +1,60 @@
+---
+import type { SectionId } from "../config/site";
+import site from "../config/site";
+import copy from "../content/copy";
+import { fill } from "../lib/fill";
+import logo from "../assets/brand/logo.svg";
+import MobileMenu from "./MobileMenu.astro";
+
+const NAV_LABELS: Partial<Record<SectionId, string>> = {
+  services: copy.header.navServices,
+  gallery: copy.header.navGallery,
+  about: copy.header.navAbout,
+  testimonials: copy.header.navTestimonials,
+  location: copy.header.navLocation,
+  faq: copy.header.navFaq,
+  contact: copy.header.navContact,
+};
+
+const navItems = site.sections
+  .filter((section) => section.enabled && NAV_LABELS[section.id])
+  .map((section) => ({ href: `#${section.id}`, label: NAV_LABELS[section.id]! }));
+---
+
+<header class="site-header">
+  <div class="container site-header__bar">
+    <a href="/" class="site-header__logo">
+      <img
+        src={logo.src}
+        width={logo.width}
+        height={logo.height}
+        alt={fill(copy.header.logoAlt, { businessName: site.business.name })}
+      />
+    </a>
+
+    <MobileMenu navItems={navItems} />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    padding-block: var(--space-xs);
+  }
+
+  .site-header__logo img {
+    height: 32px;
+    width: auto;
+  }
+</style>

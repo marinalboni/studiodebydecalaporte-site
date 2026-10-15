@@ -1,0 +1,136 @@
+---
+import site from "../../config/site";
+import copy from "../../content/copy";
+import { fill } from "../../lib/fill";
+import { buildHoursDisplay } from "../../lib/hours";
+import MapFacade from "../ui/MapFacade.astro";
+
+const tokens = { neighborhood: site.address.neighborhood, city: site.address.city };
+const intro = fill(copy.location.intro, tokens);
+const days = buildHoursDisplay(site.hours.days, copy.location.dayLabels, copy.location.closedLabel);
+---
+
+<section id="location" aria-labelledby="location-heading" class="location">
+  <div class="container location__grid">
+    <div class="location__info">
+      <p class="section-eyebrow">{copy.location.eyebrow}</p>
+      <h2 id="location-heading">{copy.location.heading}</h2>
+      <p class="section-intro">{intro}</p>
+
+      <h3>{copy.location.addressHeading}</h3>
+      <address class="location__address">
+        {
+          site.address.showFullAddress ? (
+            <>
+              {site.address.street}, {site.address.number}
+              {site.address.complement ? `, ${site.address.complement}` : ""}
+              <br />
+            </>
+          ) : (
+            <p class="location__address-note">{copy.location.addressWithheldNote}</p>
+          )
+        }
+        {site.address.neighborhood}, {site.address.city} - {site.address.state}
+        <br />
+        {site.address.postalCode}
+      </address>
+      <a
+        href={site.address.googleMapsUrl}
+        rel="noopener noreferrer"
+        target="_blank"
+        class="location__directions"
+      >
+        {copy.location.directionsCta}
+      </a>
+
+      <h3>{copy.location.hoursHeading}</h3>
+      <dl class="location__hours">
+        {
+          days.map((day) => (
+            <div class="location__hours-row">
+              <dt>{day.label}</dt>
+              <dd>
+                {day.closed
+                  ? copy.location.closedLabel
+                  : day.blocks.map((block, index) => (
+                      <Fragment>
+                        {index > 0 && ", "}
+                        <time datetime={block.opens}>{block.opens}</time>
+                        {"–"}
+                        <time datetime={block.closes}>{block.closes}</time>
+                      </Fragment>
+                    ))}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+      {site.hours.notes && <p class="location__notes">{site.hours.notes}</p>}
+    </div>
+
+    <div class="location__map">
+      <MapFacade />
+    </div>
+  </div>
+</section>
+
+<style>
+  .location {
+    padding-block: var(--space-2xl);
+  }
+
+  .location__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .location h3 {
+    font-size: var(--step-0);
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .location__address {
+    font-style: normal;
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+  }
+
+  .location__address-note {
+    margin-bottom: var(--space-2xs);
+    color: var(--color-text);
+  }
+
+  .location__directions {
+    display: inline-block;
+    margin-top: var(--space-xs);
+    font-weight: var(--weight-medium);
+    color: var(--color-primary);
+  }
+
+  .location__hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding-block: var(--space-2xs);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .location__hours-row dt,
+  .location__hours-row dd {
+    margin: 0;
+  }
+
+  .location__notes {
+    margin-top: var(--space-sm);
+    font-size: var(--step--1);
+    color: var(--color-text-muted);
+  }
+
+  @media (min-width: 900px) {
+    .location__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
