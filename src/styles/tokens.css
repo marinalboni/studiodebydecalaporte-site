@@ -11,8 +11,7 @@
  * keep them as plain declarations inside :root (the build fails if either
  * is missing).
  *
- * TODO: every color below is a placeholder. Replace with the client's real
- * brand palette before launch.
+ * Colors approved by Andréa (2026-10-19).
  */
 
 :root {
@@ -37,6 +36,7 @@
   --color-accent: #c4a3ec;             /* light purple: CTA buttons, floating WhatsApp button */
   --color-accent-contrast: #2b1642;    /* dark text on the light purple buttons */
   --color-accent-text: #6b3fa0;        /* accent as text, icons, borders and focus rings on light backgrounds */
+  --color-logo: #60479a;               /* stroke color of the logo; header wordmark text (7:1 on white) */
 
   /* Neutrals */
   --color-bg: #fcfaff;
@@ -97,6 +97,9 @@
   --container-width-sm: 40rem;
   --container-width-md: 60rem;
   --container-width-lg: 75rem;
+
+  /* Sticky header (44px logo + padding + border ≈ 69px), used as scroll-padding-top. */
+  --header-height: 4.5rem;
 
   /* Floating WhatsApp button (FloatingWhatsApp.astro) */
   --floating-cta-size: 3.5rem; /* 56px — mobile */

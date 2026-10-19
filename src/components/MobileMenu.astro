@@ -54,8 +54,37 @@ const { navItems } = Astro.props;
       setOpen(nav.dataset.state !== "open");
     });
 
+    // Runs fn once the drawer has finished sliding away (with a fallback in
+    // case transitionend never fires, e.g. the tab is in the background).
+    const afterClose = (fn: () => void) => {
+      let done = false;
+      const run = () => {
+        if (done) return;
+        done = true;
+        fn();
+      };
+      nav.addEventListener("transitionend", run, { once: true });
+      window.setTimeout(run, 400);
+    };
+
     nav.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => setOpen(false));
+      link.addEventListener("click", (event) => {
+        const wasOpen = nav.dataset.state === "open";
+        setOpen(false);
+        // Desktop nav (never "open") and links to other pages: native behaviour.
+        if (!wasOpen || link.pathname !== window.location.pathname || !link.hash) return;
+        const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+        if (!target) return;
+
+        // Scroll only after the drawer has closed: jumping while it animates
+        // inside the sticky header leaves the header half-painted on mobile
+        // browsers until the next manual scroll.
+        event.preventDefault();
+        afterClose(() => {
+          history.pushState(null, "", link.hash);
+          target.scrollIntoView();
+        });
+      });
     });
 
     document.addEventListener("keydown", (event) => {
@@ -106,6 +135,7 @@ const { navItems } = Astro.props;
     inset: 0 0 0 auto;
     width: min(85vw, 20rem);
     height: 100vh;
+    height: 100dvh; /* follows the mobile address bar showing/hiding */
     background: var(--color-surface);
     box-shadow: var(--shadow-lg);
     padding: var(--space-xl) var(--space-md) var(--space-md);
@@ -113,12 +143,19 @@ const { navItems } = Astro.props;
     flex-direction: column;
     gap: var(--space-lg);
     transform: translateX(100%);
-    transition: transform var(--transition-normal) var(--ease-standard);
+    /* Hidden (not just off-screen) when closed, so its links can't be tabbed
+       to; visibility flips only after the slide-out finishes. */
+    visibility: hidden;
+    transition:
+      transform var(--transition-normal) var(--ease-standard),
+      visibility 0s linear var(--transition-normal);
     overflow-y: auto;
   }
 
   .primary-nav[data-state="open"] {
     transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--transition-normal) var(--ease-standard);
   }
 
   .primary-nav__list {
@@ -149,6 +186,8 @@ const { navItems } = Astro.props;
       align-items: center;
       gap: var(--space-lg);
       transform: none;
+      visibility: visible;
+      transition: none;
       overflow: visible;
     }
 

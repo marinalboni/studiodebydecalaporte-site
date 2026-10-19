@@ -3,7 +3,8 @@ import type { SectionId } from "../config/site";
 import site from "../config/site";
 import copy from "../content/copy";
 import { fill } from "../lib/fill";
-import logo from "../assets/brand/logo.svg";
+import { Image } from "astro:assets";
+import logoSymbol from "../assets/brand/logo-symbol.png";
 import MobileMenu from "./MobileMenu.astro";
 
 const NAV_LABELS: Partial<Record<SectionId, string>> = {
@@ -25,12 +26,18 @@ const navItems = site.sections
 <header class="site-header">
   <div class="container site-header__bar">
     <a href="/" class="site-header__logo">
-      <img
-        src={logo.src}
-        width={logo.width}
-        height={logo.height}
-        alt={fill(copy.header.logoAlt, { businessName: site.business.name })}
+      <Image
+        src={logoSymbol}
+        alt={site.images.logo.alt}
+        height={44}
+        densities={[1, 2, 3]}
+        loading="eager"
+        class="site-header__symbol"
       />
+      <span class="site-header__wordmark">
+        <span class="site-header__name">{site.business.shortName}</span>
+        <span class="site-header__byline">{fill(copy.header.logoByline, { ownerName: site.about.ownerName })}</span>
+      </span>
     </a>
 
     <MobileMenu navItems={navItems} />
@@ -54,8 +61,37 @@ const navItems = site.sections
     padding-block: var(--space-xs);
   }
 
-  .site-header__logo img {
-    height: 32px;
+  .site-header__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    text-decoration: none;
+    color: var(--color-logo);
+  }
+
+  .site-header__symbol {
+    height: 44px;
     width: auto;
+  }
+
+  /* Echoes the badge: spaced capitals, name on top, owner underneath. */
+  .site-header__wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .site-header__name {
+    font-family: var(--font-heading);
+    font-weight: var(--weight-semibold);
+    font-size: var(--step-0);
+    letter-spacing: 0.18em;
+  }
+
+  .site-header__byline {
+    font-size: 0.6875rem;
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.14em;
   }
 </style>

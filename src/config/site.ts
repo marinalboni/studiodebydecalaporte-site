@@ -266,7 +266,7 @@ const site: SiteConfig = {
   business: {
     name: businessName,
     shortName: "Studio Dé",
-    // TODO: confirm whether a separate legal/trading name should appear in the footer and schema.
+    // No registered company (yet) — no legal name in footer or schema.
     legalName: undefined,
     shortDescription:
       "Terapia capilar, maquiagem, sobrancelhas e penteados em Santa Felicidade, Curitiba, com atendimento exclusivo e sem pressa.",
@@ -285,7 +285,8 @@ const site: SiteConfig = {
     phoneE164: "+5541999763703",
     whatsappNumber: "5541999763703",
     whatsappDefaultMessage: "Olá, Andréa! Gostaria de agendar um horário.",
-    // TODO: add the public contact e-mail.
+    // Intentionally not published: clients contact her by WhatsApp. Her e-mail
+    // only receives Netlify Forms notifications (configured in Netlify).
     email: undefined,
   },
 
@@ -475,15 +476,14 @@ const site: SiteConfig = {
     ],
   },
 
-  // TODO: confirm accepted payment methods (also fill the hidden FAQ answer below).
+  // Intentionally empty: payment info is not published (paymentAccepted is left out of the JSON-LD).
   paymentMethods: [],
-  // TODO: confirm amenities (parking, accessibility).
-  amenities: [],
+  amenities: ["Estacionamento gratuito"],
 
   about: {
     ownerName: "Andréa Laporte",
     yearsExperience: undefined,
-    // TODO: list real courses/certifications, or leave empty to hide the list.
+    // Intentionally empty: certifications are not shown on the site.
     certifications: [],
   },
 
@@ -517,20 +517,14 @@ const site: SiteConfig = {
       answer: "Na Av. Francisco Gulin, 1579, Casa 2, no bairro Santa Felicidade, em Curitiba.",
     },
     {
-      question: "Quais são as formas de pagamento?",
-      // TODO: fill in the accepted payment methods.
-      answer: "",
-    },
-    {
       question: "Tem estacionamento?",
-      // TODO: fill in the parking information.
-      answer: "",
+      answer: "Sim, há estacionamento gratuito.",
     },
   ],
 
   social: {
-    // TODO: add the real social links. Omit any the client doesn't have.
-    instagram: undefined,
+    // Instagram is her only social profile.
+    instagram: "https://www.instagram.com/studiodebyandrealaporte/",
     facebook: undefined,
     tiktok: undefined,
     googleBusinessProfileUrl,
@@ -552,8 +546,9 @@ const site: SiteConfig = {
   },
 
   images: {
-    // TODO: replace the placeholder wordmark with the real logo.
-    logo: { file: "logo.svg", alt: businessName },
+    // Symbol cut from the badge (logo-badge.png). Decorative in the header,
+    // where the business name is real text next to it.
+    logo: { file: "logo-symbol.png", alt: "" },
     hero: {
       file: "studio-de-lavatorio-luz-natural.jpg",
       alt: "Lavatório do Studio Dé iluminado pela luz natural da janela",

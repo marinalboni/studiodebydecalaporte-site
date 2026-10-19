@@ -88,7 +88,8 @@ export interface SiteCopy {
     navLocation: string;
     navFaq: string;
     navContact: string;
-    logoAlt: string;
+    /** Small line under the business short name in the header logo. */
+    logoByline: string;
     menuOpenLabel: string;
     menuCloseLabel: string;
   };
@@ -272,7 +273,7 @@ const copy: SiteCopy = {
     navLocation: "Localização",
     navFaq: "Dúvidas",
     navContact: "Contato",
-    logoAlt: "{businessName}",
+    logoByline: "by {ownerName}",
     menuOpenLabel: "Abrir menu",
     menuCloseLabel: "Fechar menu",
   },
@@ -748,7 +749,6 @@ const copy: SiteCopy = {
         {
           heading: "Quem é responsável pelos seus dados",
           body:
-            // TODO: add the contact e-mail here once it exists.
             "O {businessName}, sob a responsabilidade de {ownerName}, é quem decide como os dados enviados por este site são usados. Para qualquer assunto sobre os seus dados, fale pelo WhatsApp {phoneDisplay}.",
         },
         {

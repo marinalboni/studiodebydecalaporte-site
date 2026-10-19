@@ -4,7 +4,8 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 
 - Stack: Astro (static output) + TypeScript + plain CSS with design tokens. No framework islands, no backend.
 - Hosting: Netlify, deployed from GitHub. Forms: Netlify Forms.
-- Domain: `studiodebydecalaporte.com.br` (registered at registro.br in Andréa's name; connect it only on launch day).
+- Domain: `studiodebydecalaporte.com.br` — **not bought yet** (planned at registro.br in Andréa's name). Already set as `siteUrl` in `site.ts`; connect it only on launch day.
+- Netlify: site deployed from GitHub (auto-deploys on push to `main`); still `launched: false`, so every deploy is noindex.
 - This repo was created from my reusable template repo. Client-specific features (the anamnese page, `/minha-historia`) live **only here**, never in the template.
 
 ## Start of every session (do this first)
@@ -64,16 +65,23 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Design/bug fixes: removed button borders, tidied footer, spacing under About heading, hours formatted "08:00 – 20:00", gallery pop-up centered, removed duplicate WhatsApp line in Contato.
 - CSP was blocking inlined scripts in production; scripts are now separate files.
 - Header/footer links use `/#section` so they work from other pages.
-- Brand palette: purple (primary `#4a2270`, secondary `#ece3f7`, accent `#c4a3ec` with dark text, `--color-accent-text` `#6b3fa0`). Final colors still to confirm with Andréa.
+- Brand palette: purple (primary `#4a2270`, secondary `#ece3f7`, accent `#c4a3ec` with dark text, `--color-accent-text` `#6b3fa0`). Approved by Andréa on 2026-10-19.
 
 ### 2026-10-19
 - Map decision: keeps loading with the page (lazy). Privacy policy: new "Mapa do Google Maps" section with link to Google's policy; "Cookies e rastreamento" corrected (the site itself sets none, only Google Maps may).
 - `parseRichText` now also supports `[texto](https://…)` links (used in the privacy policy).
 - Service descriptions replaced with Andréa's own texts (massagem, ozonoterapia, alta frequência, laser, LED, vacuoterapia, chaterapia, argiloterapia, sobrancelha com design). Added "Curso de Automaquiagem Personalizado" (R$ 200) to Beleza.
 - Mobile: section vertical padding reduced from 6rem to 4rem via new `--space-section` token (6rem from 900px up).
+- Parking FAQ answered ("Sim, há estacionamento gratuito."); payment FAQ removed (payment info won't be published). Brand colors approved by Andréa as they are.
+- Real logo (Canva AI badge, stray accent over the "D" of ANDRÉA removed). Files in `src/assets/brand/`: `logo-original.png` (fixed source, white bg), `logo-badge.png` (transparent, used as JSON-LD `logo` and for her socials), `logo-symbol.png` (face/hair only). Header = symbol + "Studio Dé / by Andréa Laporte" as real text in `--color-logo` (#60479a, the logo's stroke color). New favicons/app icons (white symbol on primary) in `public/` (`favicon.svg` replaced by `favicon-96x96.png`), new share image `og-default.jpg` (badge on lavender).
+- First deploy to Netlify (preview URL only; domain not bought yet, `launched` stays false).
+- Mobile menu fix: tapping a link left the sticky header half-painted. Same-page links now wait for the drawer to close before scrolling; the closed drawer is `visibility: hidden` (links no longer tabbable off-screen) and uses `100dvh`; `html` has `scroll-padding-top: var(--header-height)` so sections don't land under the header.
+- Instagram added (her only social). Closed as "won't add": public e-mail (contact is WhatsApp only; her e-mail is used only for Netlify form notifications), legal name (no registered company yet), certifications.
 
 ## Decisions made
 
+- **No public e-mail, no legal name, no certifications (2026-10-19):** WhatsApp is the only contact channel and the LGPD contact in the privacy policy. Revisit the legal name if she registers a company (MEI/CNPJ).
+- **Service texts (2026-10-19):** Andréa's own descriptions stay as written, by Marina's decision, even where they make health claims.
 - **Map (2026-10-19):** loads automatically with the page (no click-to-load), iframe has `loading="lazy"`, pt-BR title from `copy.ts`, `referrerpolicy="no-referrer-when-downgrade"` and a fixed 16/10 aspect ratio (no layout shift). The privacy policy has a "Mapa do Google Maps" section explaining Google may collect data and set cookies, linking to Google's privacy policy.
 
 ## Pending decisions
@@ -82,11 +90,11 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 
 ## Still to do (TODOs)
 
-- **Contact:** email (also add it to the privacy policy), Instagram and other social links, Google Business Profile URL in `sameAs`.
-- **Practical info:** payment methods, parking (their FAQ answers stay hidden until filled), founding year, legal name, certifications/courses.
-- **Content:** testimonials (section hidden while empty; reviews on Google aren't showing text yet), real logo (current one is a placeholder wordmark), OG/share image (1200×630), favicons from the real logo, final brand colors in `tokens.css`.
+- **Practical info:** founding year (optional; left out of the JSON-LD while empty).
+- **Content:** testimonials — copy 3–6 of her Google reviews into `site.testimonials` by hand (with the reviewers' permission); section stays hidden while empty.
+- **Logo (optional):** the top "DÉ" accent in the badge sits beside the É because of the curve; if Andréa dislikes it, re-export from Canva and regenerate the assets.
 - **Unused:** `images.space` entries in `site.ts` aren't shown anywhere (studio photos go in the gallery instead). Remove or use them.
-- **Reviews by Andréa:** her new service descriptions contain health/growth claims that clash with the no-health-promises rule (ozonoterapia "redução da caspa e de dermatites", alta frequência "bactericidas, fungicidas e cicatrizantes", laser "crescimento… de novos fios", LED "reduz a queda de cabelo", argiloterapia "auxiliam no crescimento") — decide whether to soften; remaining Claude-written descriptions (terapia personalizada, microagulhamento, drug delivery, other Beleza items); the condensed About text; the privacy policy (and set a real "last updated" date).
+- **Reviews by Andréa:** remaining Claude-written descriptions (terapia personalizada, microagulhamento, drug delivery, other Beleza items); the condensed About text; the privacy policy (and set a real "last updated" date).
 - **Photo consent:** confirm every client shown in the gallery agreed to appear on the site.
 
 ## Launch checklist (in order)
@@ -99,7 +107,7 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
    - all scripts work under the CSP (mobile menu, gallery, form validation);
    - PageSpeed Insights mobile 90+.
 4. In Netlify: form notifications **only to Andréa's email** (questionnaire has health data); plan to delete old submissions regularly.
-5. Connect the domain `studiodebydecalaporte.com.br` (apex as primary, www redirects to it).
+5. Buy `studiodebydecalaporte.com.br` at registro.br (in Andréa's name, with her CPF), then connect it in Netlify (apex as primary, www redirects to it).
 6. Set `launched: true` in `site.ts`, redeploy, check the live `robots.txt` and the home page robots meta.
 7. Google Search Console: verify the domain, submit `sitemap-index.xml`, request indexing of the home page.
 8. Only now: add the website link to her Google Business Profile, Instagram bio and WhatsApp Business profile.
