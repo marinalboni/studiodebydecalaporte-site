@@ -66,12 +66,18 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Header/footer links use `/#section` so they work from other pages.
 - Brand palette: purple (primary `#4a2270`, secondary `#ece3f7`, accent `#c4a3ec` with dark text, `--color-accent-text` `#6b3fa0`). Final colors still to confirm with Andréa.
 
+### 2026-10-19
+- Map decision: keeps loading with the page (lazy). Privacy policy: new "Mapa do Google Maps" section with link to Google's policy; "Cookies e rastreamento" corrected (the site itself sets none, only Google Maps may).
+- `parseRichText` now also supports `[texto](https://…)` links (used in the privacy policy).
+- Service descriptions replaced with Andréa's own texts (massagem, ozonoterapia, alta frequência, laser, LED, vacuoterapia, chaterapia, argiloterapia, sobrancelha com design). Added "Curso de Automaquiagem Personalizado" (R$ 200) to Beleza.
+- Mobile: section vertical padding reduced from 6rem to 4rem via new `--space-section` token (6rem from 900px up).
+
+## Decisions made
+
+- **Map (2026-10-19):** loads automatically with the page (no click-to-load), iframe has `loading="lazy"`, pt-BR title from `copy.ts`, `referrerpolicy="no-referrer-when-downgrade"` and a fixed 16/10 aspect ratio (no layout shift). The privacy policy has a "Mapa do Google Maps" section explaining Google may collect data and set cookies, linking to Google's privacy policy.
+
 ## Pending decisions
 
-- **Map (decide before launch):**
-  - Option A — back to **click-to-load**: no Google cookies until the visitor clicks, faster page, privacy policy stays accurate.
-  - Option B — keep it **loading with the page**: then add `loading="lazy"` to the iframe and mention the Google Maps embed (and its cookies) in the privacy policy.
-  - Right now the privacy policy says the site has no cookies/trackers, which is **not accurate** with option B.
 - **Questionnaire required fields:** confirm with Andréa that only parts 1 and 4 being required is OK (her original Google Form required almost everything).
 
 ## Still to do (TODOs)
@@ -80,13 +86,13 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - **Practical info:** payment methods, parking (their FAQ answers stay hidden until filled), founding year, legal name, certifications/courses.
 - **Content:** testimonials (section hidden while empty; reviews on Google aren't showing text yet), real logo (current one is a placeholder wordmark), OG/share image (1200×630), favicons from the real logo, final brand colors in `tokens.css`.
 - **Unused:** `images.space` entries in `site.ts` aren't shown anywhere (studio photos go in the gallery instead). Remove or use them.
-- **Reviews by Andréa:** the one-line service descriptions (written by Claude) against the no-health-promises rule; the condensed About text; the privacy policy (and set a real "last updated" date).
+- **Reviews by Andréa:** her new service descriptions contain health/growth claims that clash with the no-health-promises rule (ozonoterapia "redução da caspa e de dermatites", alta frequência "bactericidas, fungicidas e cicatrizantes", laser "crescimento… de novos fios", LED "reduz a queda de cabelo", argiloterapia "auxiliam no crescimento") — decide whether to soften; remaining Claude-written descriptions (terapia personalizada, microagulhamento, drug delivery, other Beleza items); the condensed About text; the privacy policy (and set a real "last updated" date).
 - **Photo consent:** confirm every client shown in the gallery agreed to appear on the site.
 
 ## Launch checklist (in order)
 
 1. All TODOs above resolved (search `TODO` in `src/`).
-2. Map decision made and privacy policy matches it.
+2. ~~Map decision made and privacy policy matches it.~~ Done 2026-10-19.
 3. Deploy to Netlify and test on the preview URL:
    - submit one test questionnaire and check `?ficha=1` survives the redirect (if not, the generic thank-you text shows, which is fine);
    - the embedded map loads;

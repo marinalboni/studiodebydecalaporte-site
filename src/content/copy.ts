@@ -773,9 +773,14 @@ const copy: SiteCopy = {
             "De acordo com a LGPD, você pode pedir, a qualquer momento, acesso, correção ou exclusão dos seus dados, e também revogar o consentimento dado na ficha de anamnese. Para isso, fale pelo WhatsApp {phoneDisplay}.",
         },
         {
+          heading: "Mapa do Google Maps",
+          body:
+            "A seção “Localização” da página inicial exibe um mapa incorporado do Google Maps, que é carregado diretamente dos servidores do Google quando você chega a essa parte da página. Ao carregar o mapa, o Google pode coletar dados (como o seu endereço IP e informações do navegador) e definir cookies, de acordo com a [Política de Privacidade do Google](https://policies.google.com/privacy). O {businessName} não tem acesso a esses dados.",
+        },
+        {
           heading: "Cookies e rastreamento",
           body:
-            "Este site não usa cookies próprios nem ferramentas de rastreamento ou de análise de visitas. A página inicial exibe um mapa do Google Maps, que é carregado diretamente do Google e segue a política de privacidade do Google.",
+            "O próprio site não define cookies nem usa ferramentas de rastreamento ou de análise de visitas. Os únicos cookies que podem ser definidos são os do Google Maps, descritos acima.",
         },
       ],
     },

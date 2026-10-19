@@ -31,7 +31,17 @@ const lastUpdated = new Intl.DateTimeFormat(site.locale, { dateStyle: "long" }).
           <h2>{section.heading}</h2>
           {parseRichText(fill(section.body, tokens)).map((segments) => (
             <p>
-              {segments.map((segment) => (segment.bold ? <strong>{segment.text}</strong> : segment.text))}
+              {segments.map((segment) =>
+                segment.href ? (
+                  <a href={segment.href} target="_blank" rel="noopener noreferrer">
+                    {segment.text}
+                  </a>
+                ) : segment.bold ? (
+                  <strong>{segment.text}</strong>
+                ) : (
+                  segment.text
+                ),
+              )}
             </p>
           ))}
         </section>

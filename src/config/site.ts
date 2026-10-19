@@ -353,54 +353,56 @@ const site: SiteConfig = {
             id: "massagem-capilar-terapeutica",
             name: "Massagem Capilar Terapêutica",
             description:
-              "Massagem no couro cabeludo que proporciona relaxamento e bem-estar durante o cuidado com os fios.",
+              "Massagem no couro cabeludo que proporciona relaxamento e bem-estar, além de ativar a microcirculação local.",
             price: 80,
           },
           {
             id: "ozonoterapia-capilar",
             name: "Ozonoterapia Capilar",
             description:
-              "Aplicação de ozônio no couro cabeludo como parte do cuidado com a higiene e o equilíbrio da região.",
+              "Auxilia na recuperação da saúde capilar, trazendo inúmeros benefícios, como a hidratação dos fios, melhor penetração dos tratamentos e redução da caspa e de dermatites.",
             price: 160,
           },
           {
             id: "laser-capilar",
             name: "Laser Capilar",
-            description: "Aplicação de laser no couro cabeludo como complemento do protocolo de cuidado capilar.",
+            description:
+              "Aplicação de laser no couro cabeludo como complemento do protocolo de cuidado capilar, auxiliando na circulação sanguínea e promovendo o crescimento e fortalecimento de novos fios.",
             price: 80,
           },
           {
             id: "alta-frequencia-capilar",
             name: "Alta Frequência Capilar",
             description:
-              "Aplicação de alta frequência no couro cabeludo, recurso que complementa o cuidado com a saúde da região.",
+              "Aplicação de alta frequência no couro cabeludo, recurso que complementa o cuidado com a saúde da região e tem propriedades bactericidas, fungicidas e cicatrizantes.",
             price: 80,
           },
           {
             id: "led-capilar",
             name: "LED Capilar",
-            description: "Sessão de luz de LED no couro cabeludo, integrada ao protocolo de cuidado capilar.",
+            description:
+              "Sessão de luz de LED no couro cabeludo, integrada ao protocolo de cuidado capilar: estimula os folículos, melhora a circulação e reduz a queda de cabelo.",
             price: 70,
           },
           {
             id: "vacuoterapia-capilar",
             name: "Vacuoterapia Capilar",
             description:
-              "Técnica de sucção suave no couro cabeludo que favorece o relaxamento e complementa o protocolo capilar.",
+              "Técnica de sucção suave no couro cabeludo que aumenta a irrigação sanguínea do bulbo capilar, promovendo a vasodilatação. O resultado é um couro cabeludo livre de resíduos e mais suscetível à absorção de tratamentos de uso tópico.",
             price: 130,
           },
           {
             id: "chaterapia-capilar",
             name: "Chaterapia Capilar",
             description:
-              "Aplicação de chás e ervas no couro cabeludo e nos fios, um cuidado natural para o equilíbrio da região.",
+              "Aplicação de blends de chás e ervas no couro cabeludo e nos fios, um cuidado natural para o equilíbrio, estímulo e limpeza da região.",
             price: 130,
           },
           {
             id: "argiloterapia-capilar",
             name: "Argiloterapia Capilar",
             description:
-              "Aplicação de argilas no couro cabeludo, um cuidado que ajuda a manter o equilíbrio e a sensação de limpeza.",
+              "As argilas têm propriedades que auxiliam no crescimento e fortalecimento dos cabelos. A Argiloterapia ajuda a controlar a oleosidade, promove a limpeza dos óstios foliculares, além de estimular a circulação sanguínea, o que pode contribuir para um couro cabeludo mais saudável e equilibrado.",
             price: 160,
           },
         ],
@@ -420,7 +422,8 @@ const site: SiteConfig = {
           {
             id: "sobrancelha-design",
             name: "Sobrancelha com Design",
-            description: "Design de sobrancelhas pensado para valorizar o formato do seu rosto.",
+            description:
+              "Design e limpeza de sobrancelhas com aplicação de henna ou coloração de sobrancelhas, pensado para valorizar o formato do seu rosto.",
             price: 80,
           },
           {
@@ -441,6 +444,12 @@ const site: SiteConfig = {
             description: "Maquiagem personalizada para o dia a dia, eventos ou ocasiões especiais.",
             price: 140,
             priceFrom: true,
+          },
+          {
+            id: "curso-automaquiagem",
+            name: "Curso de Automaquiagem Personalizado",
+            description: "Aprenda a se maquiar com técnicas práticas que valorizam você, com leveza e confiança.",
+            price: 200,
           },
           {
             id: "penteado",
