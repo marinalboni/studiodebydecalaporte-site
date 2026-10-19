@@ -44,11 +44,11 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Hours: seg–sex 08:00–20:00 · sáb–dom 09:00–18:00 · atendimento exclusivo com hora marcada
 - Google Business Profile share link ("Como chegar"): https://share.google/k3QyXdKDiWl5m0CNh
 - Price range: $$
-- Services: two categories, **Terapia capilar** (11, with "Terapia Capilar Personalizada" featured, "Sob avaliação") then **Beleza** (8). Prices are in `site.ts`.
+- Services: two categories, **Terapia capilar** (11, with "Terapia Capilar Personalizada" featured, "Sob avaliação") then **Beleza** (9). Prices are in `site.ts`.
 
 ## Pages
 
-- `/` — one-page site (hero, serviços, galeria, sobre, avaliações, localização, FAQ, contato)
+- `/` — one-page site (hero, serviços, galeria, sobre, localização, FAQ, contato)
 - `/minha-historia` — Andréa's full story, indexable, linked from About and footer
 - `/ficha-de-anamnese` — hair questionnaire (Netlify form `ficha-de-anamnese`), noindex, not in sitemap or menu. Footer link toggled by `ui.showAnamneseInFooter` (currently off). Linked from the terapia capilar card ("Preencher anamnese").
 - `/obrigado` (+ `?ficha=1` for the questionnaire), `/politica-de-privacidade`, `404`
@@ -75,6 +75,7 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Parking FAQ answered ("Sim, há estacionamento gratuito."); payment FAQ removed (payment info won't be published). Brand colors approved by Andréa as they are.
 - Real logo (Canva AI badge, stray accent over the "D" of ANDRÉA removed). Files in `src/assets/brand/`: `logo-original.png` (fixed source, white bg), `logo-badge.png` (transparent, used as JSON-LD `logo` and for her socials), `logo-symbol.png` (face/hair only). Header = symbol + "Studio Dé / by Andréa Laporte" as real text in `--color-logo` (#60479a, the logo's stroke color). New favicons/app icons (white symbol on primary) in `public/` (`favicon.svg` replaced by `favicon-96x96.png`), new share image `og-default.jpg` (badge on lavender).
 - First deploy to Netlify (preview URL only; domain not bought yet, `launched` stays false).
+- Removed the "Avaliações" (testimonials) section completely: component, copy, `Testimonial` type, section id and the menu/footer links (the link was showing even though the empty section was hidden). Reviews stay on her Google profile only.
 - Mobile menu fix: tapping a link left the sticky header half-painted. Same-page links now wait for the drawer to close before scrolling; the closed drawer is `visibility: hidden` (links no longer tabbable off-screen) and uses `100dvh`; `html` has `scroll-padding-top: var(--header-height)` so sections don't land under the header.
 - Instagram added (her only social). Closed as "won't add": public e-mail (contact is WhatsApp only; her e-mail is used only for Netlify form notifications), legal name (no registered company yet), certifications.
 
@@ -91,7 +92,6 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 ## Still to do (TODOs)
 
 - **Practical info:** founding year (optional; left out of the JSON-LD while empty).
-- **Content:** testimonials — copy 3–6 of her Google reviews into `site.testimonials` by hand (with the reviewers' permission); section stays hidden while empty.
 - **Logo (optional):** the top "DÉ" accent in the badge sits beside the É because of the curve; if Andréa dislikes it, re-export from Canva and regenerate the assets.
 - **Unused:** `images.space` entries in `site.ts` aren't shown anywhere (studio photos go in the gallery instead). Remove or use them.
 - **Reviews by Andréa:** remaining Claude-written descriptions (terapia personalizada, microagulhamento, drug delivery, other Beleza items); the condensed About text; the privacy policy (and set a real "last updated" date).

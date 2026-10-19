@@ -66,12 +66,6 @@ export interface ServiceCategory {
   items: Service[];
 }
 
-export interface Testimonial {
-  author: string;
-  text: string;
-  source: "Google";
-}
-
 export interface FaqItem {
   question: string;
   /** Leave empty ("") to keep a question drafted but hidden from the page and the JSON-LD. */
@@ -84,7 +78,6 @@ export type SectionId =
   | "services"
   | "gallery"
   | "about"
-  | "testimonials"
   | "location"
   | "faq"
   | "contact";
@@ -196,7 +189,6 @@ export interface SiteConfig {
     certifications: string[];
   };
 
-  testimonials: Testimonial[];
   faq: FaqItem[];
 
   social: {
@@ -487,8 +479,6 @@ const site: SiteConfig = {
     certifications: [],
   },
 
-  // TODO: add real Google reviews (with permission). Empty hides the section.
-  testimonials: [],
 
   // Entries with an empty answer stay hidden (page and JSON-LD) until filled.
   faq: [
@@ -572,7 +562,6 @@ const site: SiteConfig = {
     { id: "services", enabled: true },
     { id: "gallery", enabled: true },
     { id: "about", enabled: true },
-    { id: "testimonials", enabled: true },
     { id: "location", enabled: true },
     { id: "faq", enabled: true },
     { id: "contact", enabled: true },

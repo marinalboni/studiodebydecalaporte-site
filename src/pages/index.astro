@@ -8,7 +8,6 @@ import Hero from "../components/sections/Hero.astro";
 import Services from "../components/sections/Services.astro";
 import Gallery from "../components/sections/Gallery.astro";
 import About from "../components/sections/About.astro";
-import Testimonials from "../components/sections/Testimonials.astro";
 import Location from "../components/sections/Location.astro";
 import FAQ from "../components/sections/FAQ.astro";
 import Contact from "../components/sections/Contact.astro";
@@ -31,17 +30,12 @@ const SECTION_COMPONENTS: Record<SectionId, any> = {
   services: Services,
   gallery: Gallery,
   about: About,
-  testimonials: Testimonials,
   location: Location,
   faq: FAQ,
   contact: Contact,
 };
 
-const activeSections = site.sections.filter((section) => {
-  if (!section.enabled) return false;
-  if (section.id === "testimonials" && site.testimonials.length === 0) return false;
-  return true;
-});
+const activeSections = site.sections.filter((section) => section.enabled);
 ---
 
 <BaseLayout title={title} description={description} ogImageAlt={ogImageAlt}>

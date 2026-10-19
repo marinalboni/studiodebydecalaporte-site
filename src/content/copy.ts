@@ -84,7 +84,6 @@ export interface SiteCopy {
     navServices: string;
     navGallery: string;
     navAbout: string;
-    navTestimonials: string;
     navLocation: string;
     navFaq: string;
     navContact: string;
@@ -139,14 +138,6 @@ export interface SiteCopy {
     certificationsHeading: string;
   };
 
-  testimonials: {
-    eyebrow: string;
-    heading: string;
-    intro: string;
-    ctaSeeAll: string;
-    ctaLeaveReview: string;
-    sourceLabel: string;
-  };
 
   location: {
     eyebrow: string;
@@ -269,7 +260,6 @@ const copy: SiteCopy = {
     navServices: "Serviços",
     navGallery: "Galeria",
     navAbout: "Sobre",
-    navTestimonials: "Avaliações",
     navLocation: "Localização",
     navFaq: "Dúvidas",
     navContact: "Contato",
@@ -319,15 +309,6 @@ const copy: SiteCopy = {
       "Aos 54 anos, deixei o trabalho corporativo para seguir um sonho: cuidar da autoestima das pessoas. Comecei pela maquiagem, inspirada numa lembrança de infância: minha mãe se arrumando em frente ao espelho antes de ir trabalhar. Aos 83 anos, ela ainda faz isso todos os dias, agora por si mesma, para se sentir bem.\n\nFui ampliando minha formação com design de sobrancelhas e penteados até chegar à terapia capilar, que entrou na minha vida por experiência própria: enfrentei queda de cabelo sem motivo aparente e as mudanças da menopausa. Entendendo melhor esse universo, percebi como o estresse, a ansiedade e a rotina afetam o couro cabeludo e os fios, e passei a criar protocolos personalizados para ajudar quem passa pelo mesmo.\n\nAqui não existe atendimento \"fast\". Cada pessoa é recebida com tempo, atenção e cuidado, porque a beleza não cabe num padrão de tempo. **Bora se reinventar?**",
     storyLinkLabel: "Leia minha história completa",
     certificationsHeading: "Formação e certificações",
-  },
-
-  testimonials: {
-    eyebrow: "O que dizem as clientes",
-    heading: "Avaliações",
-    intro: "Depoimentos de quem já passou pelo studio.",
-    ctaSeeAll: "Ver todas as avaliações no Google",
-    ctaLeaveReview: "Deixe sua avaliação",
-    sourceLabel: "Avaliação do Google",
   },
 
   location: {
