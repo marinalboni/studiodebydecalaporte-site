@@ -4,7 +4,7 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 
 - Stack: Astro (static output) + TypeScript + plain CSS with design tokens. No framework islands, no backend.
 - Hosting: Netlify, deployed from GitHub. Forms: Netlify Forms.
-- Domain: `studiodebydecalaporte.com.br` — **not bought yet** (planned at registro.br in Andréa's name). Already set as `siteUrl` in `site.ts`; connect it only on launch day.
+- Domain: `studiodebyandrealaporte.com.br` ("andrea", not "deca") — **registered** at registro.br in Andréa's name on 2026-10-20, **expires 20/10/2027 (renew before then)**. Set as `siteUrl` in `site.ts`; connect it in Netlify only on launch day.
 - Netlify: site deployed from GitHub (auto-deploys on push to `main`); still `launched: false`, so every deploy is noindex.
 - This repo was created from my reusable template repo. Client-specific features (the anamnese page, `/minha-historia`) live **only here**, never in the template.
 
@@ -79,6 +79,9 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Mobile menu fix: tapping a link left the sticky header half-painted. Same-page links now wait for the drawer to close before scrolling; the closed drawer is `visibility: hidden` (links no longer tabbable off-screen) and uses `100dvh`; `html` has `scroll-padding-top: var(--header-height)` so sections don't land under the header.
 - Instagram added (her only social). Closed as "won't add": public e-mail (contact is WhatsApp only; her e-mail is used only for Netlify form notifications), legal name (no registered company yet), certifications.
 
+### 2026-10-20
+- Domain registered: `studiodebyandrealaporte.com.br` (registro.br, Andréa's name, expires 20/10/2027). `siteUrl` updated in `site.ts`; canonical, sitemap, robots.txt, og:url/og:image, JSON-LD and the form `_next` URL all derive from it. Old `studiodebydecalaporte.com.br` references removed (the repo/package name `studiodebydecalaporte-site` is unchanged).
+
 ## Decisions made
 
 - **No public e-mail, no legal name, no certifications (2026-10-19):** WhatsApp is the only contact channel and the LGPD contact in the privacy policy. Revisit the legal name if she registers a company (MEI/CNPJ).
@@ -107,7 +110,7 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
    - all scripts work under the CSP (mobile menu, gallery, form validation);
    - PageSpeed Insights mobile 90+.
 4. In Netlify: form notifications **only to Andréa's email** (questionnaire has health data); plan to delete old submissions regularly.
-5. Buy `studiodebydecalaporte.com.br` at registro.br (in Andréa's name, with her CPF), then connect it in Netlify (apex as primary, www redirects to it).
+5. ~~Buy the domain at registro.br.~~ Done 2026-10-20 (`studiodebyandrealaporte.com.br`, in Andréa's name). Connect it in Netlify (apex as primary, www redirects to it).
 6. Set `launched: true` in `site.ts`, redeploy, check the live `robots.txt` and the home page robots meta.
 7. Google Search Console: verify the domain, submit `sitemap-index.xml`, request indexing of the home page.
 8. Only now: add the website link to her Google Business Profile, Instagram bio and WhatsApp Business profile.
