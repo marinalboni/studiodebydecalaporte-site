@@ -237,6 +237,8 @@ export interface SiteCopy {
       description: string;
       heading: string;
       updatedLabel: string;
+      /** ISO date (YYYY-MM-DD). Change it whenever the policy text changes. */
+      updatedDate: string;
       intro: string;
       sections: { heading: string; body: string }[];
     };
@@ -723,7 +725,8 @@ const copy: SiteCopy = {
         "Como o {businessName} trata os dados enviados pelo formulário de contato e pela ficha de anamnese capilar.",
       heading: "Política de Privacidade",
       updatedLabel: "Última atualização",
-      // TODO: revisar — the owner (ideally with a professional) should review this whole policy before launch.
+      // Approved by Andréa on 2026-10-20. Update this date whenever the text below changes.
+      updatedDate: "2026-10-20",
       intro:
         "Esta política explica, de forma simples, quais dados este site coleta, por que motivo, como eles são guardados e como você pode exercer os seus direitos previstos na Lei Geral de Proteção de Dados (LGPD).",
       sections: [

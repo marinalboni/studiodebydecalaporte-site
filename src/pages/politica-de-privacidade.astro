@@ -13,15 +13,18 @@ const tokens = {
 const title = fill(copy.pages.privacy.title, tokens);
 const description = fill(copy.pages.privacy.description, tokens);
 
-// TODO: set a real "last updated" date whenever this policy's content changes.
-const lastUpdated = new Intl.DateTimeFormat(site.locale, { dateStyle: "long" }).format(new Date());
+const updatedDate = copy.pages.privacy.updatedDate;
+// Parsed and formatted in UTC so the day never shifts with the build machine's timezone.
+const lastUpdated = new Intl.DateTimeFormat(site.locale, { dateStyle: "long", timeZone: "UTC" }).format(
+  new Date(`${updatedDate}T00:00:00Z`),
+);
 ---
 
 <BaseLayout title={title} description={description} includeStructuredData={false}>
   <article class="container privacy">
     <h1>{copy.pages.privacy.heading}</h1>
     <p class="privacy__updated">
-      {copy.pages.privacy.updatedLabel}: <time datetime={new Date().toISOString().slice(0, 10)}>{lastUpdated}</time>
+      {copy.pages.privacy.updatedLabel}: <time datetime={updatedDate}>{lastUpdated}</time>
     </p>
     <p class="privacy__intro">{copy.pages.privacy.intro}</p>
 

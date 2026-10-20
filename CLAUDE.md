@@ -81,6 +81,9 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 
 ### 2026-10-20
 - Domain registered: `studiodebyandrealaporte.com.br` (registro.br, Andréa's name, expires 20/10/2027). `siteUrl` updated in `site.ts`; canonical, sitemap, robots.txt, og:url/og:image, JSON-LD and the form `_next` URL all derive from it. Old `studiodebydecalaporte.com.br` references removed (the repo/package name `studiodebydecalaporte-site` is unchanged).
+- Founding year set to 2024 (`foundingDate` in the JSON-LD).
+- Privacy policy approved by Andréa as it is. "Última atualização" is now a fixed date (`copy.pages.privacy.updatedDate`, 2026-10-20) instead of the build date; change it whenever the policy text changes.
+- Closed with Andréa: questionnaire required fields (parts 1 and 4 only) OK, logo OK as is, remaining service descriptions and the About text approved, photo consent confirmed for every gallery client. `images.space` was already gone from `site.ts`. Removed the stale og-image TODO (`og-default.jpg` is the final 1200×630 share image).
 
 ## Decisions made
 
@@ -90,19 +93,15 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 
 ## Pending decisions
 
-- **Questionnaire required fields:** confirm with Andréa that only parts 1 and 4 being required is OK (her original Google Form required almost everything).
+- None.
 
 ## Still to do (TODOs)
 
-- **Practical info:** founding year (optional; left out of the JSON-LD while empty).
-- **Logo (optional):** the top "DÉ" accent in the badge sits beside the É because of the curve; if Andréa dislikes it, re-export from Canva and regenerate the assets.
-- **Unused:** `images.space` entries in `site.ts` aren't shown anywhere (studio photos go in the gallery instead). Remove or use them.
-- **Reviews by Andréa:** remaining Claude-written descriptions (terapia personalizada, microagulhamento, drug delivery, other Beleza items); the condensed About text; the privacy policy (and set a real "last updated" date).
-- **Photo consent:** confirm every client shown in the gallery agreed to appear on the site.
+- None outside the launch checklist. The only `TODO` left in `src/` is `launched: true` (step 6).
 
 ## Launch checklist (in order)
 
-1. All TODOs above resolved (search `TODO` in `src/`).
+1. ~~All TODOs above resolved.~~ Done 2026-10-20.
 2. ~~Map decision made and privacy policy matches it.~~ Done 2026-10-19.
 3. Deploy to Netlify and test on the preview URL:
    - submit one test questionnaire and check `?ficha=1` survives the redirect (if not, the generic thank-you text shows, which is fine);

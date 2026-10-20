@@ -265,8 +265,8 @@ const site: SiteConfig = {
     // Exactly as published on her Google Business Profile — keep the two in sync.
     longDescription:
       "Atendimento exclusivo com hora marcada. Entre em contato para agendar seu horário! O Studio Dé by Andréa Laporte é um espaço dedicado à beleza, autoestima e bem-estar. Sob os cuidados de Andréa, oferece atendimento personalizado e acolhedor, respeitando as necessidades de cada pessoa. Os serviços incluem terapia capilar com protocolos personalizados, argiloterapia, chaterapia, vacuoterapia, ozonoterapia, laser capilar e microagulhamento com exossomos, além de corte de cabelo, maquiagem, design de sobrancelhas e penteados. Aqui, cada atendimento é único, com atenção aos detalhes e sem pressa, porque cuidar de você é tão importante quanto realçar sua beleza.",
-    // TODO: confirm the year the business started.
-    foundingYear: undefined,
+    // Confirmed by Marina on 2026-10-20.
+    foundingYear: 2024,
     priceRange: "$$",
     // Matches her Google Business Profile category ("Salão de beleza").
     schemaType: "BeautySalon",
@@ -521,7 +521,6 @@ const site: SiteConfig = {
   },
 
   seo: {
-    // TODO: replace with a real 1200x630 image once branding/photos are ready.
     ogImage: "src/assets/brand/og-default.jpg",
   },
 
