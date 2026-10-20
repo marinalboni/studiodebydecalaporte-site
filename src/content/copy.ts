@@ -64,8 +64,8 @@ export interface AnamneseCopy {
   submitLabel: string;
   honeypotLabel: string;
   /**
-   * Readable summary sent as one extra field (filled by JS on submit), so the
-   * notification e-mail lists every question next to its answer.
+   * Readable summary, the only field Netlify knows about (filled by JS on
+   * submit), so the notification e-mail lists every question next to its answer.
    */
   summary: {
     /** Form field name — becomes the label of the summary in the e-mail. */
@@ -73,6 +73,8 @@ export interface AnamneseCopy {
     /** Shown in place of the answer for questions left blank. */
     emptyAnswer: string;
   };
+  /** Shown only when JavaScript is off: the answers can't be sent without it. Tokens: {phoneDisplay}. */
+  noScriptNotice: string;
   errors: {
     required: string;
     email: string;
@@ -723,6 +725,8 @@ const copy: SiteCopy = {
         fieldName: "Respostas da ficha",
         emptyAnswer: "(sem resposta)",
       },
+      noScriptNotice:
+        "Para enviar a ficha, é preciso ativar o JavaScript no seu navegador. Se preferir, fale pelo WhatsApp {phoneDisplay}.",
       errors: {
         required: "Campo obrigatório.",
         email: "Informe um e-mail válido.",

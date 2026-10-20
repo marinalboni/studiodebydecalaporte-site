@@ -10,6 +10,7 @@ import Button from "./Button.astro";
 const text = copy.pages.anamnese;
 const FORM_NAME = "ficha-de-anamnese";
 const consentLabelBefore = fill(text.consentLabelBefore, { businessName: site.business.name });
+const noScriptNotice = fill(text.noScriptNotice, { phoneDisplay: site.contact.phoneDisplay });
 
 const fieldId = (field: AnamneseField) => `anamnese-${field.name}`;
 const describedBy = (field: AnamneseField) =>
@@ -17,12 +18,27 @@ const describedBy = (field: AnamneseField) =>
 const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${index}`;
 ---
 
+{/*
+  Netlify's e-mail lists every field it detects in the built HTML, even empty
+  ones. So this hidden copy is the one Netlify registers, with only the summary:
+  that's all the e-mail shows. The visible form below isn't registered itself;
+  it posts under the same form-name, and its question fields (which Netlify
+  doesn't know) are disabled on submit anyway, once copied into the summary.
+*/}
+<form name={FORM_NAME} data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value={FORM_NAME} />
+  <input type="hidden" name={text.summary.fieldName} />
+  <input type="text" name="bot-field" />
+</form>
+
+<noscript>
+  <p class="anamnese-form__noscript">{noScriptNotice}</p>
+</noscript>
+
 <form
   name={FORM_NAME}
   method="POST"
   action={`${site.form.successPath}?ficha=1`}
-  data-netlify="true"
-  netlify-honeypot="bot-field"
   class="anamnese-form"
   data-error-required={text.errors.required}
   data-error-email={text.errors.email}
@@ -167,8 +183,8 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
 </form>
 
 <script>
-  // Progressive enhancement only: without JS the form still submits, with
-  // native validation for every field except "at least one checkbox".
+  // Validation messages and the e-mail summary. Without JS the answers can't
+  // reach Netlify (only the summary field is registered), hence the <noscript> notice.
   document.querySelectorAll<HTMLFormElement>(".anamnese-form").forEach((form) => {
     const messages = form.dataset;
 
@@ -313,6 +329,14 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
 </script>
 
 <style>
+  .anamnese-form__noscript {
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-accent-text);
+    border-radius: var(--radius-md);
+  }
+
   .anamnese-form {
     display: flex;
     flex-direction: column;
