@@ -31,8 +31,13 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
   data-error-checkbox-group={text.errors.checkboxGroup}
   data-error-radio-group={text.errors.radioGroup}
   data-error-consent={text.errors.consent}
+  data-summary-empty={text.summary.emptyAnswer}
+  data-summary-other={text.otherDetailLabel}
 >
   <input type="hidden" name="form-name" value={FORM_NAME} />
+  <!-- Comes first so it opens the notification e-mail; filled on submit. -->
+  <input type="hidden" name={text.summary.fieldName} value="" data-summary />
+
   <p class="anamnese-form__honeypot" aria-hidden="true">
     <label for="anamnese-botfield">{text.honeypotLabel}</label>
     <input id="anamnese-botfield" type="text" name="bot-field" tabindex="-1" autocomplete="off" />
@@ -42,7 +47,11 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
 
   {
     text.sections.map((section, sectionIndex) => (
-      <section class="anamnese-form__section" aria-labelledby={`anamnese-section-${section.id}`}>
+      <section
+        class="anamnese-form__section"
+        aria-labelledby={`anamnese-section-${section.id}`}
+        data-summary-heading={`${fill(text.stepLabelTemplate, { current: sectionIndex + 1, total: text.sections.length })}: ${section.heading}`}
+      >
         <p class="anamnese-form__step">
           {fill(text.stepLabelTemplate, { current: sectionIndex + 1, total: text.sections.length })}
         </p>
@@ -69,6 +78,7 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
                 id={id}
                 aria-describedby={describedBy(field)}
                 data-required-group={isCheckbox && field.required ? "" : undefined}
+                data-question={field.label}
               >
                 <legend>
                   {field.label} {marker}
@@ -101,7 +111,7 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
           }
 
           return (
-            <div class="anamnese-form__field">
+            <div class="anamnese-form__field" data-question={field.label}>
               <label for={id}>
                 {field.label} {marker}
               </label>
@@ -243,6 +253,39 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
 
       control.addEventListener("input", onChange);
       control.addEventListener("change", onChange);
+    });
+
+    // Netlify's e-mail labels radio/checkbox answers by their option text and
+    // lists blank fields without an answer, which is hard to read. Fill one
+    // field with every question, numbered and grouped by part, next to its answer.
+    // "submit" only fires once validation has passed.
+    const summary = form.querySelector<HTMLInputElement>("input[data-summary]");
+    form.addEventListener("submit", () => {
+      if (!summary) return;
+      const empty = messages.summaryEmpty ?? "";
+      const otherLabel = messages.summaryOther ?? "";
+      const blocks: string[] = [];
+      let number = 0;
+
+      form.querySelectorAll<HTMLElement>("[data-summary-heading]").forEach((section) => {
+        const lines = [section.dataset.summaryHeading ?? ""];
+        section.querySelectorAll<HTMLElement>("[data-question]").forEach((field) => {
+          let answer: string;
+          if (field.matches("fieldset")) {
+            const chosen = Array.from(field.querySelectorAll<HTMLInputElement>("input:checked")).map((input) => input.value);
+            const detail = field.querySelector<HTMLInputElement>(".anamnese-form__other input")?.value.trim();
+            if (detail) chosen.push(`${otherLabel} ${detail}`);
+            answer = chosen.join(", ");
+          } else {
+            answer = field.querySelector<HTMLInputElement | HTMLTextAreaElement>("input, textarea")?.value.trim() ?? "";
+          }
+          number += 1;
+          lines.push(`${number}. ${field.dataset.question ?? ""}`, `   ${answer || empty}`);
+        });
+        blocks.push(lines.join("\n"));
+      });
+
+      summary.value = blocks.join("\n\n");
     });
   });
 </script>

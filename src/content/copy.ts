@@ -63,6 +63,16 @@ export interface AnamneseCopy {
   consentLabelAfter: string;
   submitLabel: string;
   honeypotLabel: string;
+  /**
+   * Readable summary sent as one extra field (filled by JS on submit), so the
+   * notification e-mail lists every question next to its answer.
+   */
+  summary: {
+    /** Form field name — becomes the label of the summary in the e-mail. */
+    fieldName: string;
+    /** Shown in place of the answer for questions left blank. */
+    emptyAnswer: string;
+  };
   errors: {
     required: string;
     email: string;
@@ -709,6 +719,10 @@ const copy: SiteCopy = {
       consentLabelAfter: ".",
       submitLabel: "Enviar ficha",
       honeypotLabel: "Não preencha este campo",
+      summary: {
+        fieldName: "Respostas da ficha",
+        emptyAnswer: "(sem resposta)",
+      },
       errors: {
         required: "Campo obrigatório.",
         email: "Informe um e-mail válido.",
