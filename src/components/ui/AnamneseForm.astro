@@ -257,9 +257,23 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
 
     // Netlify's e-mail labels radio/checkbox answers by their option text and
     // lists blank fields without an answer, which is hard to read. Fill one
-    // field with every question, numbered and grouped by part, next to its answer.
-    // "submit" only fires once validation has passed.
+    // field with every question, numbered and grouped by part, next to its answer,
+    // then disable the individual fields so the e-mail contains only that summary.
+    // Without JS nothing is disabled and the individual fields are sent instead.
+    // "submit" only fires once validation has passed, and the browser collects
+    // the form data after this handler runs, so disabled fields are left out.
     const summary = form.querySelector<HTMLInputElement>("input[data-summary]");
+    const consent = form.querySelector<HTMLInputElement>("#anamnese-consentimento");
+    const answerControls = () =>
+      Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input, textarea")).filter(
+        (control) => control.type !== "hidden" && control.name !== "bot-field",
+      );
+
+    // The back button can restore the page as it was on submit, fields still disabled.
+    window.addEventListener("pageshow", () => {
+      answerControls().forEach((control) => (control.disabled = false));
+    });
+
     form.addEventListener("submit", () => {
       if (!summary) return;
       const empty = messages.summaryEmpty ?? "";
@@ -285,7 +299,15 @@ const optionId = (field: AnamneseField, index: number) => `${fieldId(field)}-${i
         blocks.push(lines.join("\n"));
       });
 
+      // Consent is required, so it's always "sim" here; it stays in the e-mail
+      // as the record of the client's consent to the use of health data (LGPD art. 11).
+      if (consent?.checked) {
+        const consentText = consent.labels?.[0]?.textContent?.replace(/\s*\*\s*$/, "").trim() ?? "";
+        blocks.push(`${consentText}\n   ${consent.value}`);
+      }
+
       summary.value = blocks.join("\n\n");
+      answerControls().forEach((control) => (control.disabled = true));
     });
   });
 </script>

@@ -84,7 +84,7 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Founding year set to 2024 (`foundingDate` in the JSON-LD).
 - Privacy policy approved by Andréa as it is. "Última atualização" is now a fixed date (`copy.pages.privacy.updatedDate`, 2026-10-20) instead of the build date; change it whenever the policy text changes.
 - Closed with Andréa: questionnaire required fields (parts 1 and 4 only) OK, logo OK as is, remaining service descriptions and the About text approved, photo consent confirmed for every gallery client. `images.space` was already gone from `site.ts`. Removed the stale og-image TODO (`og-default.jpg` is the final 1200×630 share image).
-- Anamnese e-mail was hard to read (radio answers labelled by their option text, blank questions listed with no answer). Added a hidden field "Respostas da ficha", first in the form, filled by JS on submit: every question numbered and grouped by part, with its answer or "(sem resposta)". Strings in `copy.pages.anamnese.summary`. The individual fields are still sent too. Without JS the summary is empty and the e-mail looks like before.
+- Anamnese e-mail was hard to read (radio answers labelled by their option text, blank questions listed with no answer). Added a hidden field "Respostas da ficha", first in the form, filled by JS on submit: every question numbered and grouped by part, with its answer or "(sem resposta)". Strings in `copy.pages.anamnese.summary`. Tested on the preview: line breaks are kept. After building the summary, JS disables the individual fields, so the e-mail has only the summary (consent is its last block, as the LGPD record). Fields are re-enabled on `pageshow` (back button). Without JS the individual fields are sent as before, with Netlify's confusing labels.
 
 ## Decisions made
 
@@ -105,7 +105,7 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 1. ~~All TODOs above resolved.~~ Done 2026-10-20.
 2. ~~Map decision made and privacy policy matches it.~~ Done 2026-10-19.
 3. Deploy to Netlify and test on the preview URL:
-   - submit one test questionnaire and check `?ficha=1` survives the redirect (if not, the generic thank-you text shows, which is fine), and that the e-mail starts with "Respostas da ficha" with its line breaks kept;
+   - submit one test questionnaire and check `?ficha=1` survives the redirect (if not, the generic thank-you text shows, which is fine), and that the e-mail contains only "Respostas da ficha";
    - the embedded map loads;
    - all scripts work under the CSP (mobile menu, gallery, form validation);
    - PageSpeed Insights mobile 90+.
