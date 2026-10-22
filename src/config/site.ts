@@ -251,8 +251,7 @@ const site: SiteConfig = {
   ogLocale: "pt_BR",
   currency: "BRL",
   siteUrl: "https://studiodebyandrealaporte.com.br",
-  // TODO: set to true at launch (README checklist, step before submitting the sitemap).
-  launched: false,
+  launched: true,
   copyLocale: "pt-BR",
 
   business: {
