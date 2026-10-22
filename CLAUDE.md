@@ -5,7 +5,7 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Stack: Astro (static output) + TypeScript + plain CSS with design tokens. No framework islands, no backend.
 - Hosting: Netlify, deployed from GitHub. Forms: Netlify Forms.
 - Domain: `studiodebyandrealaporte.com.br` ("andrea", not "deca") — **registered** at registro.br in Andréa's name on 2026-10-20, **expires 20/10/2027 (renew before then)**. Set as `siteUrl` in `site.ts`; connect it in Netlify only on launch day.
-- Netlify: site deployed from GitHub (auto-deploys on push to `main`); still `launched: false`, so every deploy is noindex.
+- Netlify: site deployed from GitHub (auto-deploys on push to `main`); `launched: true` since 2026-10-22, so the site is indexable (anamnese, obrigado and 404 stay noindex).
 - This repo was created from my reusable template repo. Client-specific features (the anamnese page, `/minha-historia`) live **only here**, never in the template.
 
 ## Start of every session (do this first)
@@ -87,6 +87,8 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Anamnese e-mail was hard to read (radio answers labelled by their option text, blank questions listed with no answer). Added a hidden field "Respostas da ficha", first in the form, filled by JS on submit: every question numbered and grouped by part, with its answer or "(sem resposta)". Strings in `copy.pages.anamnese.summary`. Tested on the preview: line breaks are kept. After building the summary, JS disables the individual fields, so the e-mail has only the summary (consent is its last block, as the LGPD record). Fields are re-enabled on `pageshow` (back button). Netlify's e-mail still listed every field it detected at build time (empty), so Netlify now registers a hidden copy of the form with only `form-name`, the summary and the honeypot; the visible form has no `data-netlify` and posts under the same form-name. The hidden copy must keep the same `action` (`/obrigado?ficha=1`), or Netlify shows its default English "Thank you" page. Trade-off: without JS the answers can't be sent, so a `<noscript>` notice (`copy.pages.anamnese.noScriptNotice`) points to WhatsApp.
 
 ### 2026-10-22
+- SEO check of the built HTML before deploy. Found: Netlify 301s `/minha-historia` → `/minha-historia/` (folder output), so canonical, og:url and sitemap URLs (no slash, `trailingSlash: "never"`) pointed at redirects. Fixed with `build.format: "file"` in `astro.config.mjs` (pages now build as `minha-historia.html`, served at the clean URL) and `SEO.astro` strips `.html`/`index.html` from the canonical path. The same fix belongs in the template repo.
+- Launch steps 3–5 confirmed done by Marina. Set `launched: true` (TODO removed; no TODOs left in `src/`). Local build checked: robots.txt allows all and points to the sitemap; home, `/minha-historia` and privacy policy are `index, follow`; anamnese, obrigado and 404 stay noindex; sitemap lists the 3 indexable pages.
 - Gallery: replaced `penteado-coque-baixo.jpg` with `terapia-capilar-antes-e-depois.jpg`, a 1600×2000 (4:5) collage of a real client's crown, "Antes" on top and "Depois" below, labels in brand purple baked into the image. Both photos zoomed out to show the whole head at the same scale, centered on a `#ece3f7` (secondary lavender) background. Sources: `Downloads\Fotos deca\WhatsApp Image 2026-10-13 at 17.38.05 (1).jpeg` (antes) and `(2).jpeg` (depois). Alt text avoids any regrowth claim.
 
 ## Decisions made
@@ -103,20 +105,20 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 
 ## Still to do (TODOs)
 
-- None outside the launch checklist. The only `TODO` left in `src/` is `launched: true` (step 6).
+- Launch checklist steps 6 (verify live) to 9.
 
 ## Launch checklist (in order)
 
 1. ~~All TODOs above resolved.~~ Done 2026-10-20.
 2. ~~Map decision made and privacy policy matches it.~~ Done 2026-10-19.
-3. Deploy to Netlify and test on the preview URL:
+3. ~~Deploy to Netlify and test on the preview URL.~~ Done 2026-10-22:
    - submit one test questionnaire and check `?ficha=1` survives the redirect (if not, the generic thank-you text shows, which is fine), and that the e-mail contains only "Respostas da ficha";
    - the embedded map loads;
    - all scripts work under the CSP (mobile menu, gallery, form validation);
    - PageSpeed Insights mobile 90+.
-4. In Netlify: form notifications **only to Andréa's email** (questionnaire has health data); plan to delete old submissions regularly.
-5. ~~Buy the domain at registro.br.~~ Done 2026-10-20 (`studiodebyandrealaporte.com.br`, in Andréa's name). Connect it in Netlify (apex as primary, www redirects to it).
-6. Set `launched: true` in `site.ts`, redeploy, check the live `robots.txt` and the home page robots meta.
+4. ~~In Netlify: form notifications **only to Andréa's email** (questionnaire has health data); plan to delete old submissions regularly.~~ Done 2026-10-22.
+5. ~~Buy the domain at registro.br.~~ Done 2026-10-20 (`studiodebyandrealaporte.com.br`, in Andréa's name). ~~Connect it in Netlify (apex as primary, www redirects to it).~~ Done 2026-10-22.
+6. ~~Set `launched: true` in `site.ts`~~ (done 2026-10-22), redeploy, check the live `robots.txt` and the home page robots meta.
 7. Google Search Console: verify the domain, submit `sitemap-index.xml`, request indexing of the home page.
 8. Only now: add the website link to her Google Business Profile, Instagram bio and WhatsApp Business profile.
 9. Take "after" screenshots for the case study (compare with the "before" folder).

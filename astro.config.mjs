@@ -10,6 +10,12 @@ export default defineConfig({
   site: site.siteUrl,
   output: "static",
   trailingSlash: "never",
+  build: {
+    // Emit /minha-historia.html instead of /minha-historia/index.html: Netlify
+    // 301s folder URLs to their trailing-slash form, which would make every
+    // slash-less canonical and sitemap URL point at a redirect.
+    format: "file",
+  },
   integrations: [
     sitemap({
       filter: (page) => !page.includes("/obrigado") && !page.includes("/ficha-de-anamnese"),

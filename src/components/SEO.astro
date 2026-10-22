@@ -29,7 +29,9 @@ const {
 // Until site.launched is true, nothing is indexable — regardless of what the page asks for.
 const robots = site.launched ? pageRobots : "noindex, nofollow";
 
-const canonicalPath = path ?? Astro.url.pathname;
+// build.format "file" makes the build-time pathname "/minha-historia.html" or "/index.html";
+// the public URL has no extension (Netlify serves the .html at the clean path).
+const canonicalPath = (path ?? Astro.url.pathname).replace(/(index)?\.html$/, "");
 const canonicalUrl = new URL(canonicalPath, site.siteUrl).toString().replace(/\/+$/, "") || site.siteUrl;
 
 const optimizedOgImage = await getImage({
