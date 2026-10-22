@@ -551,7 +551,7 @@ const site: SiteConfig = {
       { file: "maquiagem-olhos-esfumados.jpg", alt: "Maquiagem com olhos esfumados e delineado" },
       { file: "penteado-tranca-lateral.jpg", alt: "Penteado com trança lateral longa" },
       { file: "corte-chanel.jpg", alt: "Corte chanel finalizado" },
-      { file: "penteado-coque-baixo.jpg", alt: "Penteado com coque baixo texturizado" },
+      { file: "terapia-capilar-antes-e-depois.jpg", alt: "Topo da cabeça de um cliente antes e depois do protocolo de terapia capilar" },
       { file: "escova-lisa-cabelo-longo.jpg", alt: "Escova lisa em cabelo longo" },
     ],
   },
