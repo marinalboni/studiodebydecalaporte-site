@@ -4,7 +4,7 @@ export function buildWhatsAppUrl(whatsappNumber: string, message: string): strin
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
 
-/** Convenience for a service-specific CTA, e.g. "Olá! Gostaria de agendar: Corte Feminino". */
+/** Convenience for a service-specific CTA, e.g. "Olá! Gostaria de agendar: Corte Terapêutico". */
 export function buildServiceWhatsAppUrl(
   whatsappNumber: string,
   messageTemplate: string,

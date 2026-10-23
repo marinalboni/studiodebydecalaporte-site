@@ -457,8 +457,8 @@ const site: SiteConfig = {
             price: 60,
           },
           {
-            id: "corte-feminino",
-            name: "Corte Feminino",
+            id: "corte-terapeutico",
+            name: "Corte Terapêutico",
             description: "Corte personalizado de acordo com o formato do rosto e o tipo de cabelo.",
             price: 120,
           },

@@ -91,6 +91,9 @@ Client website for **Studio Dé by Andréa Laporte** (Andréa, known as "Deca"),
 - Launch steps 3–5 confirmed done by Marina. Set `launched: true` (TODO removed; no TODOs left in `src/`). Local build checked: robots.txt allows all and points to the sitemap; home, `/minha-historia` and privacy policy are `index, follow`; anamnese, obrigado and 404 stay noindex; sitemap lists the 3 indexable pages.
 - Gallery: replaced `penteado-coque-baixo.jpg` with `terapia-capilar-antes-e-depois.jpg`, a 1600×2000 (4:5) collage of a real client's crown, "Antes" on top and "Depois" below, labels in brand purple baked into the image. Both photos zoomed out to show the whole head at the same scale, centered on a `#ece3f7` (secondary lavender) background. Sources: `Downloads\Fotos deca\WhatsApp Image 2026-10-13 at 17.38.05 (1).jpeg` (antes) and `(2).jpeg` (depois). Alt text avoids any regrowth claim.
 
+### 2026-10-23
+- Beleza service "Corte Feminino" renamed to "Corte Terapêutico" (id `corte-terapeutico`). Description and price (R$ 120) unchanged.
+
 ## Decisions made
 
 - **Before/after scalp photo (2026-10-22):** one real before/after collage is in the gallery, by Marina's decision, overriding the "no before/after scalp photos" rule for this image only. Check the client's photo consent covers it.
